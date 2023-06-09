@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description
+    xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:at="http://github.com/galtm/xslt-accumulator-tools"
+    xmlns:av="http://github.com/galtm/xslt-accumulator-tools/variables"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    run-as="import"
+    stylesheet="../acc-report-inclusion.xsl"
+    xslt-version="3.0">
+
+    <x:helper stylesheet="acc-indent-level-modified.xsl"/>
+
+    <x:param name="at:acc-decl-uri" as="xs:string" select="'test/acc-indent-level-modified.xsl'"/>
+    <x:param name="at:acc-name" as="xs:string" select="'indent-level-modified'"/>
+
+    <x:variable name="av:tree" href="node-types.xml" as="document-node()"/>
+
+    <x:scenario label="Tests for at:indent-level accumulator">
+        <x:call function="true"/>
+        <x:expect label="At start of a top-level element, indent level is 1"
+            test="$av:tree/element/accumulator-before('at:indent-level')"
+            select="1"/>
+        <x:expect label="At end of a top-level element, indent level is 0"
+            test="$av:tree/element/accumulator-after('at:indent-level')"
+            select="0"/>
+        <x:expect label="At start of a text node child of top-level element, indent level is 2"
+            test="$av:tree/element/text()/accumulator-before('at:indent-level')"
+            select="2"/>
+        <x:expect label="At end of a text node child of top-level element, indent level is 1"
+            test="$av:tree/element/text()/accumulator-after('at:indent-level')"
+            select="1"/>
+        <x:expect label="At start of a top-level comment, indent level is 1"
+            test="$av:tree/comment()/accumulator-before('at:indent-level')"
+            select="1"/>
+        <x:expect label="At end of a top-level comment, indent level is 0"
+            test="$av:tree/comment()/accumulator-after('at:indent-level')"
+            select="0"/>
+        <x:expect label="At start of a top-level PI, indent level is 1"
+            test="$av:tree/processing-instruction(pi)/accumulator-before('at:indent-level')"
+            select="1"/>
+        <x:expect label="At end of a top-level PI, indent level is 0"
+            test="$av:tree/processing-instruction(pi)/accumulator-after('at:indent-level')"
+            select="0"/>
+        <x:variable name="av:deeper-tree" as="element(one)">
+            <one><two>three <three>four</three></two></one>
+        </x:variable>
+        <x:expect label="Sanity-check indentation sequence for deeper tree"
+            test="$av:deeper-tree/descendant-or-self::node() ! accumulator-before('at:indent-level')"
+            select="(1, 2, 3, 3, 4)"/>
+        <x:expect label="Sanity-check that 'after' values are one less than 'before' values"
+            test="$av:deeper-tree/descendant-or-self::node() ! accumulator-after('at:indent-level')"
+            select="(0, 1, 2, 2, 3)"/>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:prior-value accumulator" pending="TODO">
+    </x:scenario>
+
+    <x:scenario label="Tests for match='/' template">
+        <x:context mode="at:acc-view" href="one-element-tree.xml" select="/"/>
+        <x:expect label="Overall structure of HTML report">
+            <h:html>
+                <h:head>
+                    <h:meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+                    <h:title>Values of indent-level-modified Accumulator for Document one-element-tree.xml</h:title>
+                    <h:style type="text/css">...</h:style>
+                </h:head>
+                <h:body>
+                    <h:h1>Values of indent-level-modified Accumulator for Document one-element-tree.xml</h:h1>
+                    <h:p>Document URI: <h:code>...</h:code></h:p>
+                    <h:p>Accumulator declaration URI: <h:code>test/acc-indent-level-modified.xsl</h:code></h:p>
+                    <h:details>
+                        <h:summary>Declaration</h:summary>
+                        <h:pre>...</h:pre>
+                    </h:details>
+                    <h:table>
+                        <h:thead>
+                            <h:th>Node or Element Tag</h:th>
+                            <h:th>Value, Changed or Document Start/End</h:th>
+                        </h:thead>
+                        <h:tbody>
+                            <h:tr>
+                                <h:td>
+                                    <h:em>Document node start</h:em>
+                                </h:td>
+                                <h:td><h:pre>0</h:pre></h:td>
+                            </h:tr>
+                            <h:tr>...</h:tr>
+                            <h:tr>...</h:tr>
+                            <h:tr>
+                                <h:td>
+                                    <h:em>Document node end</h:em>
+                                </h:td>
+                                <h:td><h:pre>0</h:pre></h:td>
+                            </h:tr>
+                        </h:tbody>
+                    </h:table>
+                </h:body>
+            </h:html>
+        </x:expect>
+        <x:expect label="Sanity-check content of style element, coming from .css file"
+            test="contains($x:result/self::h:html/h:head/h:style,'.attrname {color: #F5844C;}')"/>
+        <x:expect label="Sanity-check document URI value"
+            test="ends-with($x:result/self::h:html/h:body/h:p[1]/h:code,'/test/one-element-tree.xml')"/>
+    </x:scenario>
+
+    <x:scenario label="Tests for match='element()' template">
+        <x:scenario label="Element with no children other than attributes">
+            <x:context mode="at:acc-view" select="/p">
+                <p attr="1"/>
+            </x:context>
+            <x:expect label="Two table rows, each with two cells">
+                <h:tr>
+                    <h:td>...</h:td>
+                    <h:td>...</h:td>
+                </h:tr>
+                <h:tr>
+                    <h:td>...</h:td>
+                    <h:td>...</h:td>
+                </h:tr>
+            </x:expect>
+            <x:expect label="First row, first cell has indented, serialized element start tag" test="($x:result/self::h:tr)[1]/h:td[1]">
+                <h:td>&#160;&#160;<h:span class="tag">&lt;p</h:span>
+                    <h:span class="attrname"> attr=</h:span>
+                    <h:span class="attrval">"1"</h:span>
+                    <h:span class="tag">&gt;</h:span>
+                </h:td>
+            </x:expect>
+            <x:expect label="First row, second cell has accumulator value at start phase" test="($x:result/self::h:tr)[1]/h:td[2]">
+                <h:td>
+                    <h:pre>1</h:pre>
+                </h:td>
+            </x:expect>
+            <x:expect label="Second row, first cell has indented, serialized element end tag" test="($x:result/self::h:tr)[2]/h:td[1]">
+                <h:td>&#160;&#160;<h:span class="tag">&lt;/p&gt;</h:span></h:td>
+            </x:expect>
+            <x:expect label="Second row, second cell has accumulator value at end phase" test="($x:result/self::h:tr)[2]/h:td[2]">
+                <h:td>
+                    <h:pre>0</h:pre>
+                </h:td>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="Element with one child node, a text node">
+            <x:context mode="at:acc-view" select="/p">
+                <p attr="1">text</p>
+            </x:context>
+            <x:expect label="Three table rows: two for this element's tags and one for child text node, and one for each tag of child element">
+                <h:tr>...</h:tr>
+                <h:tr>...</h:tr>
+                <h:tr>...</h:tr>
+            </x:expect>
+            <x:expect label="Sanity-check values in right column"
+                test="//h:tr/h:td/following-sibling::h:td/h:pre/string()"
+                select="('1','2','1','0')"/>
+        </x:scenario>
+        <x:scenario label="Element with one child node, an element node">
+            <x:context mode="at:acc-view" select="/p">
+                <p attr="1"><code/></p>
+            </x:context>
+            <x:expect label="Four table rows: two for this element's tags and one for each tag of child element">
+                <h:tr>...</h:tr>
+                <h:tr>...</h:tr>
+                <h:tr>...</h:tr>
+                <h:tr>...</h:tr>
+            </x:expect>
+            <x:expect label="Sanity-check values in right column"
+                test="//h:tr/h:td/following-sibling::h:td/h:pre/string()"
+                select="('1','2','1','0')"/>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for match='text()' template">
+        <x:scenario label="Whitespace-only text node that should be skipped">
+            <x:context mode="at:acc-view" select="/descendant::text()"><p><x:text> </x:text></p></x:context>
+            <x:expect label="Empty sequence" select="()"/>
+        </x:scenario>
+        <x:scenario label="Substantive text node">
+            <x:context mode="at:acc-view" select="/p/text()"><p>Text</p></x:context>
+            <x:expect label="Table row with two cells">
+                <h:tr>
+                    <h:td>...</h:td>
+                    <h:td>...</h:td>
+                </h:tr>
+            </x:expect>
+            <x:expect label="First cell has indented text" test="$x:result/h:td[1]">
+                <h:td>&#160;&#160;&#160;&#160;Text</h:td>
+            </x:expect>
+            <x:expect label="Second cell has accumulator values for this node" test="$x:result/h:td[2]">
+                <h:td>
+                    <h:span>Start: </h:span><h:pre>2</h:pre>
+                    <h:span>End: </h:span><h:pre>1</h:pre>
+                </h:td>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for match='comment()' template">
+        <x:context mode="at:acc-view" select="/p/comment()"><p><!--Comment text--></p></x:context>
+        <x:expect label="Table row with two cells">
+            <h:tr>
+                <h:td>...</h:td>
+                <h:td>...</h:td>
+            </h:tr>
+        </x:expect>
+        <x:expect label="First cell has span with indented, serialized comment" test="$x:result/h:td[1]">
+            <h:td><h:span class="comment">&#160;&#160;&#160;&#160;&lt;!--Comment text--></h:span></h:td>
+        </x:expect>
+        <x:expect label="Second cell has accumulator values for this node" test="$x:result/h:td[2]">
+            <h:td>
+                <h:span>Start: </h:span><h:pre>2</h:pre>
+                <h:span>End: </h:span><h:pre>1</h:pre>
+            </h:td>
+        </x:expect>
+    </x:scenario>
+
+    <x:scenario label="Tests for match='processing-instruction()' template">
+        <x:scenario label="Special PI 'acc-decl-uri'">
+            <x:context mode="at:acc-view" select="/processing-instruction()"><?acc-decl-uri xyz?></x:context>
+            <x:expect label="Empty sequence" select="()"/>
+        </x:scenario>
+        <x:scenario label="Special PI 'acc-name'">
+            <x:context mode="at:acc-view" select="/processing-instruction()"><?acc-name xyz?></x:context>
+            <x:expect label="Empty sequence" select="()"/>
+        </x:scenario>
+        <x:scenario label="Special PI 'acc-parent-uri'">
+            <x:context mode="at:acc-view" select="/processing-instruction()"><?acc-parent-uri xyz?></x:context>
+            <x:expect label="Empty sequence" select="()"/>
+        </x:scenario>
+        <x:scenario label="Typical user-defined processing instruction">
+            <x:context mode="at:acc-view" select="/p/processing-instruction()"><p><?pi-name xyz?></p></x:context>
+            <x:expect label="Table row with two cells">
+                <h:tr>
+                    <h:td>...</h:td>
+                    <h:td>...</h:td>
+                </h:tr>
+            </x:expect>
+            <x:expect label="First cell has span with indented, serialized processing instruction" test="$x:result/h:td[1]">
+                <h:td><h:span class="pi">&#160;&#160;&#160;&#160;&lt;?pi-name xyz?></h:span></h:td>
+            </x:expect>
+            <x:expect label="Second cell has accumulator values for this node" test="$x:result/h:td[2]">
+                <h:td>
+                    <h:span>Start: </h:span><h:pre>2</h:pre>
+                    <h:span>End: </h:span><h:pre>1</h:pre>
+                </h:td>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:indent template">
+        <x:scenario label="Typical case">
+            <x:context select="//code"><section><p><code>x</code></p></section></x:context>
+            <x:call template="at:indent"/>
+            <x:expect label="String of level*width (3*2) spaces"
+                select="'&#160;&#160;&#160;&#160;&#160;&#160;'"/>
+        </x:scenario>
+        <x:scenario label="Level is zero">
+            <x:context select="/"><section><p><code>x</code></p></section></x:context>
+            <x:call template="at:indent"/>
+            <x:expect label="Empty string" select="''"/>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:second-column-non-element-node template">
+        <x:scenario label="Context where accumulator value is unchanged from start to end phase">
+            <x:context select="/processing-instruction()"><?no-indent?></x:context>
+            <x:call template="at:second-column-non-element-node"/>
+            <x:expect label="Single value with no start or end label">
+                <h:pre>0</h:pre>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="Context where accumulator value changes from start to end phase">
+            <x:context select="/text()">Text</x:context>
+            <x:call template="at:second-column-non-element-node"/>
+            <x:expect label="Labeled start and end values">
+                <h:span>Start: </h:span>
+                <h:pre>1</h:pre>
+                <h:span>End: </h:span>
+                <h:pre>0</h:pre>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:show-declaration template">
+        <x:scenario label="acc-name with local name and no Q{}">
+            <x:call template="at:show-declaration">
+                <x:param name="acc-name" select="'indent-level-modified'"/>
+            </x:call>
+            <x:expect label="Sanity-check accumulator declaration code to confirm it was found"
+                test="contains($x:result/self::h:details/h:pre,
+                '&lt;xsl:accumulator-rule match=')"/>
+        </x:scenario>
+        <x:scenario label="acc-name with empty Q{}">
+            <x:call template="at:show-declaration">
+                <x:param name="acc-name" select="'Q{}indent-level-modified'"/>
+            </x:call>
+            <x:expect label="Sanity-check accumulator declaration code to confirm it was found"
+                test="contains($x:result/self::h:details/h:pre,
+                '&lt;xsl:accumulator-rule match=')"/>
+        </x:scenario>
+        <x:scenario label="acc-name with URI-qualified name">
+            <x:call template="at:show-declaration">
+                <x:param name="acc-decl-uri" select="resolve-uri('../acc-duplicate.xsl')"/>
+                <x:param name="acc-name" select="'Q{http://github.com/galtm/xslt-accumulator-tools}acc2'"/>
+            </x:call>
+            <x:expect label="Sanity-check accumulator declaration code to confirm it was found"
+                test="contains($x:result/self::h:details/h:pre,
+                '&lt;xsl:accumulator-rule match=')"/>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:truncated-text-or-comment template">
+        <x:scenario label="Text node ">
+            <x:scenario label="with short content">
+                <x:context select="/p/text()"><p>Short</p></x:context>
+                <x:call template="at:truncated-text-or-comment"/>
+                <x:expect label="Indentation followed by full text content"
+                    select="'&#160;&#160;&#160;&#160;Short'"/>
+            </x:scenario>
+            <x:scenario label="whose content equals truncation limit">
+                <x:context select="/p/text()">
+                    <p>123456789 123456789 123456789 123456789 123456789 1234567890</p>
+                </x:context>
+                <x:call template="at:truncated-text-or-comment"/>
+                <x:expect label="Indentation followed by full text content"
+                    select="'&#160;&#160;&#160;&#160;' || 
+                    '123456789 123456789 123456789 123456789 123456789 1234567890'"/>
+            </x:scenario>
+            <x:scenario label="whose content exceeds truncation limit">
+                <x:context select="/p/text()">
+                    <p>123456789 123456789 123456789 123456789 123456789 12345678901</p>
+                </x:context>
+                <x:call template="at:truncated-text-or-comment"/>
+                <x:expect label="Indentation, truncated text content, and ellipsis"
+                    select="'&#160;&#160;&#160;&#160;' ||
+                    '123456789 123456789 123456789 123456789 123456789 1234567890' ||
+                    '...'"/>
+            </x:scenario>
+        </x:scenario>
+        <x:scenario label="Comment node ">
+            <x:scenario label="with short content">
+                <x:context select="/p/comment()"><p><!--Short--></p></x:context>
+                <x:call template="at:truncated-text-or-comment"/>
+                <x:expect label="Indentation, comment start, full text content, comment end"
+                    select="'&#160;&#160;&#160;&#160;&lt;!--Short-->'"/>
+            </x:scenario>
+            <x:scenario label="whose content equals truncation limit">
+                <x:context select="/p/comment()">
+                    <p><!--123456789 123456789 123456789 123456789 123456789 1234567890--></p>
+                </x:context>
+                <x:call template="at:truncated-text-or-comment"/>
+                <x:expect label="Indentation, comment start, full text content, comment end"
+                    select="'&#160;&#160;&#160;&#160;' || 
+                    '&lt;!--' || 
+                    '123456789 123456789 123456789 123456789 123456789 1234567890' || 
+                    '-->'"/>
+            </x:scenario>
+            <x:scenario label="whose content exceeds truncation limit">
+                <x:context select="/p/comment()">
+                    <p><!--123456789 123456789 123456789 123456789 123456789 12345678901--></p>
+                </x:context>
+                <x:call template="at:truncated-text-or-comment"/>
+                <x:expect label="Indentation, comment start, truncated text content, ellipsis, comment end"
+                    select="'&#160;&#160;&#160;&#160;' ||
+                    '&lt;!--' ||
+                    '123456789 123456789 123456789 123456789 123456789 1234567890' || 
+                    '...' || 
+                    '-->'"/>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:acc-value-if-changed template">
+        <x:variable name="av:val1" as="map(*)" select="map{'a': 1}"/>
+        <x:variable name="av:val2" as="map(*)" select="map{'a': 1+2}"/>
+        <x:scenario label="Inputs are deep-equal to each other">
+            <x:call template="at:acc-value-if-changed">
+                <x:param name="acc-value" select="$av:val1"/>
+                <x:param name="acc-prior-value" select="$av:val1"/>
+            </x:call>
+            <x:expect label="Empty sequence" select="()"/>
+        </x:scenario>
+        <x:scenario label="Inputs are not deep-equal to each other">
+            <x:call template="at:acc-value-if-changed">
+                <x:param name="acc-value" select="$av:val2"/>
+                <x:param name="acc-prior-value" select="$av:val1"/>
+            </x:call>
+            <x:expect label="HTML pre element containing adaptive-serialized $acc-value">
+                <h:pre>map{"a":3}</h:pre>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:list-attrs function">
+        <x:scenario label="Attribute nodes as input">
+            <x:call function="at:list-attrs">
+                <x:param select="//*/@*"><b attr1="1" attr2="2"/></x:param>
+            </x:call>
+            <x:expect label="Pair of span elements per attribute">
+                <h:span class="attrname"> attr1=</h:span>
+                <h:span class="attrval">"1"</h:span>
+                <h:span class="attrname"> attr2=</h:span>
+                <h:span class="attrval">"2"</h:span>
+            </x:expect> 
+        </x:scenario>
+        <x:scenario label="Empty sequence as input">
+            <x:call function="at:list-attrs">
+                <x:param select="()"/>
+            </x:call>
+            <x:expect label="Empty sequence as output" select="()"/>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:truncate-uri function">
+        <x:scenario label="URI is in this repository">
+            <x:call function="at:truncate-uri">
+                <x:param select="'file:/C:/arbitrary/location/xslt-accumulator-tools/sample-acc/some/file.xml'"/>
+            </x:call>
+            <x:expect label="Ellipsis followed by path from this repository onward"
+                select="'.../xslt-accumulator-tools/sample-acc/some/file.xml'"/>
+        </x:scenario>
+        <x:scenario label="Arbitrary URI">
+            <x:call function="at:truncate-uri">
+                <x:param select="'file:/C:/arbitrary/location/some/file.xml'"/>
+            </x:call>
+            <x:expect label="Ellipsis followed by path from this repository onward"
+                select="'file:/C:/arbitrary/location/some/file.xml'"/>
+        </x:scenario>
+    </x:scenario>
+
+    <!-- 
+    This file is part of xslt-accumulator-tools.
+
+    xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    xslt-accumulator-tools is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License along with xslt-accumulator-tools. If not, see <https://www.gnu.org/licenses/>.
+    -->
+
+</x:description>

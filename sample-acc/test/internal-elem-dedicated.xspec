@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:myv="my-xspec-variables"
+    stylesheet="../internal-elem-trace.xsl"
+    run-as="import">
+
+    <x:scenario label="Values of internal-elem accumulator" focus="h">
+        <x:variable name="myv:tree"
+            href="../sample-xml/section-with-internal-content.xml"
+            select="/"/>
+        <!-- x:call satisfies XSpec schema and compiler -->
+        <x:call function="true"/>
+        <x:expect
+            label="Start of subsection remark has 2 internal-only elements in stack"
+            test="$myv:tree/section/section/remark/accumulator-before('internal-elem')"
+            select="('remark', 'section')"/>
+        <x:expect
+            label="End of subsection remark has 1 internal-only element in stack"
+            test="$myv:tree/section/section/remark/accumulator-after('internal-elem')"
+            select="('section')"/>
+        <x:expect
+            label="At end of document, stack is empty"
+            test="$myv:tree/accumulator-after('internal-elem')"
+            select="()"/>
+
+        <!-- Variation: Boolean @test and no @select -->
+        <x:expect
+            label="At end of document, stack is empty"
+            test="empty($myv:tree/accumulator-after('internal-elem'))"/>
+    </x:scenario>
+
+    <!-- 
+    This file is part of xslt-accumulator-tools.
+
+    xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    xslt-accumulator-tools is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License along with xslt-accumulator-tools. If not, see <https://www.gnu.org/licenses/>.
+    -->
+
+</x:description>

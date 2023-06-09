@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description
+    xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:at="http://github.com/galtm/xslt-accumulator-tools"
+    xmlns:av="http://github.com/galtm/xslt-accumulator-tools/variables"
+    run-as="import"
+    stylesheet="acc-info.xsl"
+    xslt-version="3.0">
+
+    <x:variable name="av:tree" href="node-types.xml" as="document-node()"/>
+
+    <x:scenario label="Tests for at:accumulator-before function">
+        <x:variable name="av:expected-phase" as="xs:string" select="'start'"/>
+        <x:call function="at:accumulator-before">
+            <!-- Parameters are defined in the shared scenarios referenced in x:like -->
+        </x:call>
+        <x:like label="Tests for wrapper function"/>
+    </x:scenario>
+    <x:scenario label="Tests for at:accumulator-after function">
+        <x:variable name="av:expected-phase" as="xs:string" select="'end'"/>
+        <x:call function="at:accumulator-after">
+            <!-- Parameters are defined in the shared scenarios referenced in x:like -->
+        </x:call>
+        <x:like label="Tests for wrapper function"/>
+    </x:scenario>
+
+    <!-- This shared scenario has logic for testing at:accumulator-before and
+        at:accumulator-after, except that the scenario that references this one
+        via x:like must provide:
+        * Name of the function to call, in x:call/@function
+        * Value of $av:expected-phase 
+    -->
+    <x:scenario shared="yes" label="Tests for wrapper function">
+        <x:scenario label="Element node">
+            <x:call>
+                <x:param name="context" select="$av:tree/descendant::element"/>
+                <x:param name="name" select="'node-reached'"/>
+            </x:call>
+            <x:expect label="Expected phase for element"
+                select="map{'node-type':'element', 'phase':$av:expected-phase}"/>
+        </x:scenario>
+        <x:scenario label="Text node">
+            <x:call>
+                <x:param name="context" select="$av:tree/descendant::element/text()"/>
+                <x:param name="name" select="'node-reached'"/>
+            </x:call>
+            <x:expect label="Expected phase for text"
+                select="map{'node-type':'text', 'phase':$av:expected-phase}"/>
+        </x:scenario>
+        <x:scenario label="Comment node">
+            <x:call>
+                <x:param name="context" select="$av:tree/descendant::comment()"/>
+                <x:param name="name" select="'node-reached'"/>
+            </x:call>
+            <x:expect label="Expected phase for comment"
+                select="map{'node-type':'comment', 'phase':$av:expected-phase}"/>
+        </x:scenario>
+        <x:scenario label="Processing instruction node">
+            <x:call>
+                <x:param name="context" select="$av:tree/descendant::processing-instruction(pi)"/>
+                <x:param name="name" select="'node-reached'"/>
+            </x:call>
+            <x:expect label="Expected phase for processing instruction"
+                select="map{'node-type':'PI', 'phase':$av:expected-phase}"/>
+        </x:scenario>
+        <x:scenario label="Document node">
+            <x:call>
+                <x:param name="context" select="$av:tree"/>
+                <x:param name="name" select="'node-reached'"/>
+            </x:call>
+            <x:expect label="Expected phase for document node"
+                select="map{'node-type':'document-node', 'phase':$av:expected-phase}"/>
+        </x:scenario>
+        <x:scenario label="Error cases: " catch="yes">
+            <x:scenario label="Attribute node">
+                <x:call>
+                    <x:param name="context" select="$av:tree/descendant::element/@xml:id"/>
+                    <x:param name="name" select="'node-reached'"/>
+                </x:call>
+                <x:expect label="Error"
+                    test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+                <x:expect label="Message about node type of input to standard accumulator function"
+                    test="$x:result('err')('description')"
+                    select="'Context item for evaluation of accumulator function must not be an attribute or namespace node'"/>
+            </x:scenario>
+            <x:scenario label="Namespace node">
+                <x:call>
+                    <x:param name="context" select="($av:tree/descendant::element/namespace-node())[1]"/>
+                    <x:param name="name" select="'node-reached'"/>
+                </x:call>
+                <x:expect label="Error"
+                    test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+                <x:expect label="Message about node type of input to standard accumulator function"
+                    test="$x:result('err')('description')"
+                    select="'Context item for evaluation of accumulator function must not be an attribute or namespace node'"/>
+            </x:scenario>
+            <x:scenario label="Empty context">
+                <x:call>
+                    <x:param name="context" select="()"/>
+                    <x:param name="name" select="'node-reached'"/>
+                </x:call>
+                <x:expect label="Error"
+                    test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+                <x:expect label="Message about empty sequence"
+                    test="$x:result('err')('description') => starts-with('An empty sequence is not allowed as the context')"/>
+            </x:scenario>
+            <x:scenario label="Multiple-node context">
+                <x:call>
+                    <x:param name="context" select="$av:tree/descendant::node()"/>
+                    <x:param name="name" select="'node-reached'"/>
+                </x:call>
+                <x:expect label="Error"
+                    test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+                <x:expect label="Message about sequence with multiple items"
+                    test="$x:result('err')('description') => starts-with('A sequence of more than one item is not allowed')"/>
+            </x:scenario>
+            <x:scenario label="Empty string as name of accumulator">
+                <x:call>
+                    <x:param name="context" select="$av:tree"/>
+                    <x:param name="name" select="''"/>
+                </x:call>
+                <x:expect label="Error"
+                    test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+                <x:expect label="Message about invalid accumulator name"
+                    test="$x:result('err')('description')"
+                    select="'Invalid accumulator name: Invalid QName {}'"/>
+            </x:scenario>
+            <x:scenario label="Incorrect name of accumulator">
+                <x:call>
+                    <x:param name="context" select="$av:tree"/>
+                    <x:param name="name" select="'nonexistent'"/>
+                </x:call>
+                <x:expect label="Error"
+                    test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+                <x:expect label="Message about invalid accumulator name"
+                    test="$x:result('err')('description')"
+                    select="'Accumulator nonexistent has not been declared'"/>
+            </x:scenario>
+        </x:scenario>
+    </x:scenario>
+
+    <!-- 
+    This file is part of xslt-accumulator-tools.
+
+    xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    xslt-accumulator-tools is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License along with xslt-accumulator-tools. If not, see <https://www.gnu.org/licenses/>.
+    -->
+
+</x:description>

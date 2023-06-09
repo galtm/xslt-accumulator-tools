@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:myv="my-xspec-variables"
+    xmlns:at="http://github.com/galtm/xslt-accumulator-tools"
+    stylesheet="../internal-elem-wrapperfcn.xsl"
+    run-as="external">
+    <x:scenario label="Values of internal-elem accumulator">
+        <x:variable name="myv:tree"
+            href="../sample-xml/section-with-internal-content.xml"
+            select="/"/>
+        <x:scenario label="Start of subsection remark">
+            <x:call function="at:accumulator-before">
+                <x:param select="$myv:tree/section/section/remark"/>
+                <x:param select="'internal-elem'"/>
+            </x:call>
+            <x:expect label="2 internal-only elements in stack"
+                select="('remark', 'section')"/>
+        </x:scenario>
+        <x:scenario label="End of subsection remark">
+            <x:call function="at:accumulator-after">
+                <x:param select="$myv:tree/section/section/remark"/>
+                <x:param select="'internal-elem'"/>
+            </x:call>
+            <x:expect label="1 internal-only element in stack"
+                select="('section')"/>
+        </x:scenario>
+        <x:scenario label="End of document">
+            <x:call function="at:accumulator-after">
+                <x:param select="$myv:tree"/>
+                <x:param select="'internal-elem'"/>
+            </x:call>
+            <x:expect label="Empty" select="()"/>
+            <!-- Variation -->
+            <x:expect label="Empty" test="empty($x:result)"/>
+        </x:scenario>
+    </x:scenario>
+
+    <!-- 
+    This file is part of xslt-accumulator-tools.
+
+    xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    xslt-accumulator-tools is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License along with xslt-accumulator-tools. If not, see <https://www.gnu.org/licenses/>.
+    -->
+</x:description>

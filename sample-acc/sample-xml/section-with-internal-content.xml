@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?acc-decl-uri ../internal-elem.xsl?>
+<?acc-name internal-elem?>
+<section>
+    <title>Sample Title</title>
+    <remark>Ready for release</remark>
+    <para>Sample external content</para>
+    <section condition="future">
+        <title>Sample Subsection Title</title>
+            <remark>For next year, maybe</remark>
+            <para>Additional content</para>
+    </section>
+</section>

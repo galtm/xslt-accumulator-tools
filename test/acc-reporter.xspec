@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description
+    xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:at="http://github.com/galtm/xslt-accumulator-tools"
+    xmlns:av="http://github.com/galtm/xslt-accumulator-tools/variables"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+    run-as="external"
+    stylesheet="../acc-reporter.xsl"
+    xslt-version="3.0">
+
+    <x:helper stylesheet="acc-indent-level-modified.xsl"/>
+
+    <x:param name="at:acc-decl-uri" as="xs:string" select="resolve-uri('../acc-indent-level-modified.xsl')"/>
+    <x:param name="at:acc-name" as="xs:string" select="'indent-level-modified'"/>
+
+    <x:variable name="av:tree" href="node-types.xml" as="document-node()"/>
+
+    <x:scenario label="Tests for match='/' template">
+        <x:scenario label="Sample tree with working parameters">
+            <x:context select="$av:tree"/>
+            <x:expect label="Sanity-check result"
+                test="exists(/h:html/h:body/h:table//h:td[.='Document node start'])"/>
+        </x:scenario>
+        <x:scenario label="Check that error-checking is performed here" catch="yes">
+            <x:context select="$av:tree">
+                <x:param name="at:acc-name" select="'nonexistent'"/>
+            </x:context>
+            <x:expect label="Error"
+                test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:transform-options template">
+        <x:variable name="av:ns" as="xs:string" select="'http://github.com/galtm/xslt-accumulator-tools'"/>
+        <x:scenario label="Accumulator declaration is in top-level XSLT file, so acc-parent-uri is omitted">
+            <x:call template="at:transform-options">
+                <x:param name="acc-decl-uri" select="'user-xslt.xsl'"/>
+                <x:param name="acc-name" select="'name'"/>
+                <x:param name="source" select="$av:tree"/>
+            </x:call>
+            <x:expect label="Result is a map with the expected keys"
+                test="$x:result => map:keys() => sort()"
+                select="('delivery-format','initial-mode','source-node','stylesheet-node','stylesheet-params')"/>
+            <x:expect label="Format is raw" test="$x:result('delivery-format')" select="'raw'"/>
+            <x:expect label="Initial mode is at:acc-view" test="$x:result('initial-mode')"
+                select="QName($av:ns, 'at:acc-view')"/>
+            <x:expect label="Source node is from specified XML tree" test="$x:result('source-node')"
+                select="$av:tree"/>
+            <x:expect label="Stylesheet includes acc-report-inclusion.xsl and imports user XSLT"
+                test="exists($x:result('stylesheet-node')/
+                self::xsl:transform[@version='3.0']/
+                xsl:include[@href='acc-report-inclusion.xsl']/
+                following-sibling::xsl:import[@href='user-xslt.xsl'])"/>
+            <x:expect label="Stylesheet parameters are as expected"
+                test="$x:result('stylesheet-params') => map:keys()"
+                select="(
+                    QName($av:ns,'at:acc-name'),
+                    QName($av:ns,'at:trunc'),
+                    QName($av:ns,'at:skip-whitespace'),
+                    QName($av:ns,'at:acc-decl-uri')
+                )"/>
+        </x:scenario>
+        <x:scenario label="Accumulator declaration is in subordinate XSLT file, so acc-parent-uri is provided separately">
+            <x:call template="at:transform-options">
+                <x:param name="acc-decl-uri" select="'user-xslt-with-accumulator-declaration.xsl'"/>
+                <x:param name="acc-name" select="'name'"/>
+                <x:param name="acc-parent-uri" select="'user-main-xslt.xsl'"/>
+                <x:param name="source" select="$av:tree"/>
+            </x:call>
+            <x:expect label="Stylesheet includes acc-report-inclusion.xsl and imports parent XSLT"
+                test="exists($x:result('stylesheet-node')/
+                self::xsl:transform[@version='3.0']/
+                xsl:include[@href='acc-report-inclusion.xsl']/
+                following-sibling::xsl:import[@href='user-main-xslt.xsl'])"/>
+            <x:expect label="Stylesheet parameters are as expected (and do not include at:acc-parent-uri)"
+                test="$x:result('stylesheet-params') => map:keys()"
+                select="(
+                QName($av:ns,'at:acc-name'),
+                QName($av:ns,'at:trunc'),
+                QName($av:ns,'at:skip-whitespace'),
+                QName($av:ns,'at:acc-decl-uri')
+                )"/>
+            <x:expect label="Stylesheet parameter at:acc-decl-uri is the file containing the declaration, not the parent file"
+                test="$x:result('stylesheet-params')(QName($av:ns,'at:acc-decl-uri'))"
+                select="'user-xslt-with-accumulator-declaration.xsl'"/>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Tests for at:error-checking template">
+        <x:scenario label="Non-error case">
+            <x:call template="at:error-checking">
+                <x:param name="acc-decl-uri" select="resolve-uri('../acc-indent-level-modified.xsl')"/>
+                <x:param name="acc-name" select="$at:acc-name"/>
+            </x:call>
+            <x:expect label="Empty sequence and no error" select="()"/>
+        </x:scenario>
+        <x:scenario label="XSLT file not found" catch="yes">
+            <x:call template="at:error-checking">
+                <x:param name="acc-decl-uri" select="'nonexistent'"/>
+                <x:param name="acc-name" select="$at:acc-name"/>
+            </x:call>
+            <x:expect label="Error"
+                test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+            <x:expect label="Message about XSLT file not found"
+                test="$x:result('err')('value')/string()"
+                select="'Cannot find XSLT module nonexistent.'"/>
+        </x:scenario>
+        <x:scenario label="Accumulator not found" catch="yes">
+            <x:call template="at:error-checking">
+                <x:param name="acc-decl-uri" select="resolve-uri('../acc-indent-level-modified.xsl')"/>
+                <x:param name="acc-name" select="'nonexistent'"/>
+            </x:call>
+            <x:expect label="Error"
+                test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+            <x:expect label="Message about accumulator not found"
+                test="$x:result('err')('value')/string() =>
+                    starts-with('Cannot find accumulator named nonexistent in ')"/>
+        </x:scenario>
+        <x:scenario label="Duplicate accumulator found" catch="yes">
+            <x:call template="at:error-checking">
+                <x:param name="acc-decl-uri" select="resolve-uri('../acc-duplicate.xsl')"/>
+                <x:param name="acc-name" select="'Q{http://github.com/galtm/xslt-accumulator-tools}acc'"/>
+            </x:call>
+            <x:expect label="Error"
+                test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+            <x:expect label="Message about multiple accumulators found"
+                test="$x:result('err')('value')/string() =>
+                    starts-with('Found multiple accumulators named Q{http://github.com/galtm/xslt-accumulator-tools}acc in ')"/>
+        </x:scenario>
+    </x:scenario>
+
+    <!-- 
+    This file is part of xslt-accumulator-tools.
+
+    xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    xslt-accumulator-tools is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License along with xslt-accumulator-tools. If not, see <https://www.gnu.org/licenses/>.
+    -->
+
+</x:description>

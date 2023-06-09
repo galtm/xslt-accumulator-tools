@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:myv="my-xspec-variables"
+    stylesheet="../internal-elem.xsl"
+    run-as="import">
+
+    <x:scenario label="Tests for template rule for remark element">
+        <x:variable name="myv:tree"
+            href="../sample-xml/section-with-internal-content.xml"
+            select="/"/>
+        <!-- Check result for 1st remark in document -->
+        <x:context select="($myv:tree//remark)[1]"/>
+        <x:expect
+            label="Result of the template rule contains text content"
+            test="contains($x:result, 'Ready for release')"/>
+
+        <!-- Checks for accumulator values do not rely on $x:result or the
+            template rule code but can be included in this scenario if desired. -->
+        <x:expect
+            label="Accumulator: 1st remark has 1 internal-only element in stack"
+            test="($myv:tree//remark)[1]/accumulator-before('internal-elem')"
+            select="('remark')"/>
+        <x:expect
+            label="Accumulator: subsection remark has 2 internal-only elements in stack"
+            test="$myv:tree/section/section/remark/accumulator-before('internal-elem')"
+            select="('remark', 'section')"/>
+    </x:scenario>
+
+    <!-- 
+    This file is part of xslt-accumulator-tools.
+
+    xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    xslt-accumulator-tools is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License along with xslt-accumulator-tools. If not, see <https://www.gnu.org/licenses/>.
+    -->
+</x:description>

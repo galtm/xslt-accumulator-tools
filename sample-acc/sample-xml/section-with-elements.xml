@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?acc-decl-uri ../acc-decl-not-standalone.xsl?>
+<?acc-name Q{my-acc-ns}node-count?>
+<?acc-parent-uri ../parent.xsl?>
+<section>
+    <title>Sample Title</title>
+    <para>Sample content</para>
+    <unicorn>Unexpected content</unicorn>
+</section>
