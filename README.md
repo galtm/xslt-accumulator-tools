@@ -44,6 +44,8 @@ or, specifying the namespace of the global parameter in case of a conflict with 
 
 `java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:sample-acc/sample-xml/section-with-elements.xml -xsl:acc-reporter.xsl -o:section-with-elements-report.html {http://github.com/galtm/xslt-accumulator-tools}acc-name=node-count {http://github.com/galtm/xslt-accumulator-tools}acc-decl-uri=../acc-decl-not-standalone.xsl {http://github.com/galtm/xslt-accumulator-tools}acc-parent-uri=../parent.xsl` 
 
+### Sample Report
+Here is a [sample](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/sample-acc/sample-xml/acc-report/word-count-sample-acc-report.html) that shows how the report looks.
 
 ## Helper for XSpec Tests for Accumulators
 Import the `accumulator-test-tools.xsl` file in an XSLT stylesheet that you want to test with XSpec via `run-as="external"`. An example of this test architecture is in the following file:
@@ -51,7 +53,7 @@ Import the `accumulator-test-tools.xsl` file in an XSLT stylesheet that you want
 sample-acc/test/internal-elem-external.xspec
 ```
 
-For examples of architectures that test accumulators using `run-as="import"` (default), see
+For examples of architectures that test accumulators using `run-as="import"` (default), see these files:
 ```
 sample-acc/test/internal-elem-dedicated.xspec
 sample-acc/test/internal-elem-integrated.xspec

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Values of word-count Accumulator for Document word-count-sample.xml</title>
+      <style type="text/css">
+.pi       {color: #8B26C9;}
+.comment  {color: #006400;}
+.tag      {color: #0072AA;}
+.attrname {color: #F5844C;}
+.attrval  {color: #993300;}
+h1 { font-size:160%; color: #393E46;}
+p, summary { color: #0072AA; margin-top: 2px; margin-bottom: 5px; font-weight: bold;}
+code, pre { color: #222831; margin-top: 2px; font-weight: normal;}
+table, th, td {border: 1px #222831 dotted;}
+table { border-collapse: collapse; width: 100%; margin-top: 2em;}
+th, td { padding: 0px 8px 0px 8px; }
+th { background-color: #0072AA; color: #EEEEEE; padding: 5px 5px;}</style>
+   </head>
+   <body>
+      <h1>Values of word-count Accumulator for Document word-count-sample.xml</h1>
+      <p>Document URI: <code>.../xslt-accumulator-tools/sample-acc/sample-xml/word-count-sample.xml</code></p>
+      <p>Accumulator declaration URI: <code>.../xslt-accumulator-tools/sample-acc/word-count.xsl</code></p>
+      <details>
+         <summary>Declaration</summary>
+         <pre>
+&lt;xsl:accumulator xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                 name="word-count"
+                 as="xs:integer"
+                 initial-value="0"&gt;
+   &lt;xsl:accumulator-rule match="text()" select="$value + count(tokenize(.))"/&gt;
+&lt;/xsl:accumulator&gt;
+</pre>
+      </details>
+      <table>
+         <thead>
+            <th>Node or Element Tag</th>
+            <th>Value, Changed or Document Start/End</th>
+         </thead>
+         <tbody>
+            <tr>
+               <td><em>Document node start</em></td>
+               <td>
+                  <pre>0</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>  <span class="tag">&lt;section</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;title</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      Sample Title</td>
+               <td>
+                  <pre>2</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;/title&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;para</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      Sample of a </td>
+               <td>
+                  <pre>5</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;emphasis</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>        paragraph</td>
+               <td>
+                  <pre>6</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/emphasis&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;/para&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>  <span class="tag">&lt;/section&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td><em>Document node end</em></td>
+               <td>
+                  <pre>6</pre>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </body>
+</html>

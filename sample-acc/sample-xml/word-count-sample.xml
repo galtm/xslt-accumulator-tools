@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?acc-decl-uri ../word-count.xsl?>
+<?acc-name word-count?>
+<section>
+    <title>Sample Title</title>
+    <para>Sample of a <emphasis>paragraph</emphasis></para>
+</section>
