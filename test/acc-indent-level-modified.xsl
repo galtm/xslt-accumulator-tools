@@ -18,6 +18,8 @@
             are needed for testing the at:second-column-non-element-node template -->
         <xsl:accumulator-rule match="processing-instruction(no-indent)" select="$value"/>
         <xsl:accumulator-rule match="processing-instruction(no-indent)" phase="end" select="$value"/>
+        <xsl:accumulator-rule match="processing-instruction(add-ten)" select="$value + 10"/>
+        <xsl:accumulator-rule match="processing-instruction(add-ten)" phase="end" select="$value"/>
     </xsl:accumulator>
 
     <!-- 

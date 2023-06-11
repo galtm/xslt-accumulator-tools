@@ -27,42 +27,37 @@
             select="$value - 1"/>
     </xsl:accumulator>
 
-    <xsl:accumulator name="at:prior-value" initial-value="()">
-        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()">
-            <xsl:variable name="preceding-sibling" as="node()?"
-                select="preceding-sibling::node()[1]"/>
-            <xsl:variable name="parent-element" as="element()?"
-                select="parent::element()"/>
-            <xsl:variable name="last-occurrence" as="node()?"
-                select="($preceding-sibling | $parent-element)[last()]"/>
-            <xsl:choose>
-                <xsl:when test="exists($preceding-sibling)">
-                    <!-- ...</sibling-element><CONTEXT>,
-                         ...sibling text<CONTEXT>, or similar -->
-                    <xsl:sequence select="$preceding-sibling/accumulator-after($at:acc-name)"/>
-                </xsl:when>
-                <xsl:when test="exists($parent-element)">
-                    <!-- <parent><CONTEXT>...</parent>,
-                         <parent>CONTEXT...</parent>, or similar -->
-                    <xsl:sequence select="$parent-element/accumulator-before($at:acc-name)"/>
-                </xsl:when>
-                <!-- otherwise empty -->
-            </xsl:choose>
+    <!-- The at:two-value-queue accumulator stores another accumulator's
+        last value and current value. -->
+    <xsl:accumulator name="at:two-value-queue" initial-value="()" as="map(*)?">
+        <xsl:accumulator-rule match="document-node()">
+            <xsl:map>
+                <xsl:map-entry key="'prior'" select="()"/>
+                <xsl:map-entry key="'current'" select="accumulator-before($at:acc-name)"/>
+            </xsl:map>
         </xsl:accumulator-rule>
-        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()"
+        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()">
+            <xsl:map>
+                <xsl:map-entry key="'prior'" select="$value('current')"/>
+                <xsl:map-entry key="'current'" select="accumulator-before($at:acc-name)"/>
+            </xsl:map>
+        </xsl:accumulator-rule>
+        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction() | document-node()"
             phase="end">
-            <xsl:variable name="last-child" as="node()?"
-                select="child::node()[last()]"/>
-            <xsl:choose>
-                <xsl:when test="empty($last-child)">
-                    <!-- The last occurrence before this node's end phase
-                        is its own start phase. -->
-                    <xsl:sequence select="accumulator-before($at:acc-name)"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:sequence select="$last-child/accumulator-after($at:acc-name)"/>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:map>
+                <xsl:map-entry key="'prior'" select="$value('current')"/>
+                <xsl:map-entry key="'current'" select="accumulator-after($at:acc-name)"/>
+            </xsl:map>
+        </xsl:accumulator-rule>
+    </xsl:accumulator>
+
+    <xsl:accumulator name="at:prior-value" initial-value="()">
+        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction() | document-node()">
+            <xsl:sequence select="(accumulator-before('at:two-value-queue'))('prior')"/>
+        </xsl:accumulator-rule>
+        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction() | document-node()"
+            phase="end">
+            <xsl:sequence select="(accumulator-after('at:two-value-queue'))('prior')"/>
         </xsl:accumulator-rule>
     </xsl:accumulator>
 

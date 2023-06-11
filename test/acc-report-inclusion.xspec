@@ -53,7 +53,55 @@
             select="(0, 1, 2, 2, 3)"/>
     </x:scenario>
 
-    <x:scenario label="Tests for at:prior-value accumulator" pending="TODO">
+    <x:scenario label="Tests for at:prior-value accumulator">
+        <x:scenario label="Basic sanity check using 'indent-level-modified' accumulator">
+            <x:variable name="av:tree" as="document-node()" select="/">
+                <one><two>three <three>four<?no-indent PI is not indented ?></three></two></one>
+            </x:variable>
+            <x:call function="true"/>
+            <x:expect label="At start of document node, result is () because there is no prior value"
+                test="$av:tree/self::document-node()/accumulator-before('at:prior-value')"
+                select="()"/>
+            <x:expect label="At start of element 'one', prior indent level is 0"
+                test="$av:tree/one/accumulator-before('at:prior-value')"
+                select="0"/>
+            <x:expect label="At start of element 'two', prior indent level is 1"
+                test="$av:tree//two/accumulator-before('at:prior-value')"
+                select="1"/>
+            <x:expect label="At start of text node 'three', prior indent level is 2"
+                test="$av:tree//two/text()[.='three ']/accumulator-before('at:prior-value')"
+                select="2"/>
+            <x:expect label="At end of text node 'three', prior indent level is 3"
+                test="$av:tree//two/text()[.='three ']/accumulator-after('at:prior-value')"
+                select="3"/>
+            <x:expect label="At start of element 'three', prior indent level is 2"
+                test="$av:tree//three/accumulator-before('at:prior-value')"
+                select="2"/>
+            <x:expect label="At start of text node 'four', prior indent level is 3"
+                test="$av:tree//three/text()[.='four']/accumulator-before('at:prior-value')"
+                select="3"/>
+            <x:expect label="At end of text node 'four', prior indent level is 4"
+                test="$av:tree//three/text()[.='four']/accumulator-after('at:prior-value')"
+                select="4"/>
+            <x:expect label="At start of PI 'no-indent', prior indent level is 3"
+                test="$av:tree//processing-instruction('no-indent')/accumulator-before('at:prior-value')"
+                select="3"/>
+            <x:expect label="At end of PI 'no-indent', prior indent level is 3"
+                test="$av:tree//processing-instruction('no-indent')/accumulator-after('at:prior-value')"
+                select="3"/>
+            <x:expect label="At end of element 'three', prior indent level is 3"
+                test="$av:tree//three/accumulator-after('at:prior-value')"
+                select="3"/>
+            <x:expect label="At end of element 'two', prior indent level is 2"
+                test="$av:tree//two/accumulator-after('at:prior-value')"
+                select="2"/>
+            <x:expect label="At end of element 'one', prior indent level is 1"
+                test="$av:tree//one/accumulator-after('at:prior-value')"
+                select="1"/>
+            <x:expect label="At end of document node, prior indent level is 0"
+                test="$av:tree/self::document-node()/accumulator-after('at:prior-value')"
+                select="0"/>
+        </x:scenario>
     </x:scenario>
 
     <x:scenario label="Tests for match='/' template">
@@ -261,11 +309,16 @@
     </x:scenario>
 
     <x:scenario label="Tests for at:second-column-non-element-node template">
-        <x:scenario label="Context where accumulator value is unchanged from start to end phase">
+        <x:scenario label="Context where accumulator value is unchanged from start to end phase, and unchanged from prior node's value">
             <x:context select="/processing-instruction()"><?no-indent?></x:context>
             <x:call template="at:second-column-non-element-node"/>
+            <x:expect label="Empty sequence, because report shows changes only" select="()"/>
+        </x:scenario>
+        <x:scenario label="Context where accumulator value is unchanged from start to end phase, but different from prior node's value">
+            <x:context select="/processing-instruction()"><?add-ten?></x:context>
+            <x:call template="at:second-column-non-element-node"/>
             <x:expect label="Single value with no start or end label">
-                <h:pre>0</h:pre>
+                <h:pre>10</h:pre>
             </x:expect>
         </x:scenario>
         <x:scenario label="Context where accumulator value changes from start to end phase">
