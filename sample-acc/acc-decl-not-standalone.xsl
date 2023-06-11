@@ -12,7 +12,7 @@
 
     <xsl:mode use-accumulators="#all"/>
 
-    <xsl:accumulator name="h:node-count" xmlns:h="my-acc-ns"
+    <xsl:accumulator name="h:element-count" xmlns:h="my-acc-ns"
         as="xs:integer" initial-value="0">
         <xsl:accumulator-rule match="*">
             <xsl:call-template name="diagnostic-info"/>
