@@ -36,13 +36,9 @@ From your clone of this repository, you can execute a command like the following
 
 `java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:sample-acc/sample-xml/section-with-elements.xml -xsl:acc-reporter.xsl -o:section-with-elements-report.html`
 
-The file `section-with-elements.xml` contains processing instructions that identify the relevant XSLT modules and the accumulator name, so the command above does not need to pass in any global parameter values. In the absence of those processing instructions, your command would have looked like
+The file `section-with-elements.xml` contains processing instructions that identify the relevant XSLT modules and the accumulator name, so the command above does not need to pass in any global parameter values. In the absence of those processing instructions, your command would have looked like this:
 
-`java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:sample-acc/sample-xml/section-with-elements.xml -xsl:acc-reporter.xsl -o:section-with-elements-report.html acc-name=element-count acc-decl-uri=../acc-decl-not-standalone.xsl acc-parent-uri=../parent.xsl`
-
-or, specifying the namespace of the global parameter in case of a conflict with globals in your own XSLT code,
-
-`java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:sample-acc/sample-xml/section-with-elements.xml -xsl:acc-reporter.xsl -o:section-with-elements-report.html {http://github.com/galtm/xslt-accumulator-tools}acc-name=element-count {http://github.com/galtm/xslt-accumulator-tools}acc-decl-uri=../acc-decl-not-standalone.xsl {http://github.com/galtm/xslt-accumulator-tools}acc-parent-uri=../parent.xsl`
+`java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:sample-acc/sample-xml/section-with-elements.xml -xsl:acc-reporter.xsl -o:section-with-elements-report.html {http://github.com/galtm/xslt-accumulator-tools}acc-name=Q{my-acc-ns}element-count {http://github.com/galtm/xslt-accumulator-tools}acc-decl-uri=../acc-decl-not-standalone.xsl {http://github.com/galtm/xslt-accumulator-tools}acc-parent-uri=../parent.xsl`
 
 ### Sample Report
 Here is a [sample](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/sample-acc/sample-xml/acc-report/word-count-sample-acc-report.html) that shows how the report looks.
