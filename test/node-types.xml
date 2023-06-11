@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?acc-decl-uri acc-mirror.xsl?>
-<?acc-name acc-mirror?>
+<?acc-decl-uri acc-info.xsl?>
+<?acc-name node-reached?>
 <!-- Comment -->
 <?pi Processing Instruction ?>
 <element xml:id="abc" xmlns:xs="http://www.w3.org/2001/XMLSchema">Text</element>
