@@ -5,11 +5,13 @@
     version="3.0">
     <xsl:mode use-accumulators="#all"/>
     <xsl:accumulator name="internal-depth" as="xs:integer" initial-value="0">
-        <xsl:accumulator-rule match="remark | *[@condition='future']">
+        <xsl:accumulator-rule phase="start"
+            match="remark | *[@condition='future']">
             <!-- Start: Increment depth -->
             <xsl:sequence select="$value + 1"/>
         </xsl:accumulator-rule>
-        <xsl:accumulator-rule match="remark | *[@condition='future']" phase="end">
+        <xsl:accumulator-rule phase="end"
+            match="remark | *[@condition='future']">
             <!-- End: Decrement depth -->
             <xsl:sequence select="$value - 1"/>
         </xsl:accumulator-rule>
