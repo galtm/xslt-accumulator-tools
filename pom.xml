@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.galtm</groupId>
+    <artifactId>xslt-accumulator-tools</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <name>XSLT Accumulator Tools</name>
+    <description>Tools for debugging and testing XSLT accumulators</description>
+    <scm>
+        <url>https://github.com/galtm/xslt-accumulator-tools</url>
+        <developerConnection>scm:git:https://github.com/galtm/xslt-accumulator-tools</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <properties>
+        <saxon.version>11.5</saxon.version>
+    </properties>
+    <build>
+        <plugins>
+            <!-- "mvn test" runs XSpec tests -->
+            <!-- https://github.com/nkutsche/xspec-maven-plugin does not seem to have
+                the issue logged in https://github.com/xspec/xspec-maven-plugin-1/issues/65 -->
+            <plugin>
+                <groupId>com.nkutsche</groupId>
+                <artifactId>xspec-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <executions>
+                    <execution>
+                        <id>run-xspec</id>
+                        <goals>
+                            <goal>run-xspec</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.saxon</groupId>
+                        <artifactId>Saxon-HE</artifactId>
+                        <version>${saxon.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>io.xspec</groupId>
+                        <artifactId>xspec</artifactId>
+                        <version>2.2.4</version>
+                        <classifier>enduser-files</classifier>
+                        <type>zip</type>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <addDependenciesToClasspath>true</addDependenciesToClasspath>
+                    <generateSurefireReport>true</generateSurefireReport>
+                    <testDir>${project.basedir}</testDir>
+                    <includes>
+                        <include>sample-acc/test/*.xspec</include>
+                        <include>test/*.xspec</include>
+                    </includes>
+                    <excludes>
+                        <exclude>test/maven-helper.xspec</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
