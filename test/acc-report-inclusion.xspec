@@ -10,6 +10,7 @@
     xslt-version="3.0">
 
     <x:helper stylesheet="acc-indent-level-modified.xsl"/>
+    <x:import href="maven-helper.xspec"><!-- Defines $av:path-prefix --></x:import>
 
     <x:param name="at:acc-decl-uri" as="xs:string" select="'test/acc-indent-level-modified.xsl'"/>
     <x:param name="at:acc-name" as="xs:string" select="'indent-level-modified'"/>
@@ -352,7 +353,7 @@
         </x:scenario>
         <x:scenario label="acc-name with URI-qualified name">
             <x:call template="at:show-declaration">
-                <x:param name="acc-decl-uri" select="resolve-uri('../acc-duplicate.xsl')"/>
+                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-duplicate.xsl')"/>
                 <x:param name="acc-name" select="'Q{http://github.com/galtm/xslt-accumulator-tools}acc2'"/>
             </x:call>
             <x:expect label="Sanity-check accumulator declaration code to confirm it was found"
@@ -375,7 +376,7 @@
                 </x:context>
                 <x:call template="at:truncated-text-or-comment"/>
                 <x:expect label="Indentation followed by full text content"
-                    select="'&#160;&#160;&#160;&#160;' || 
+                    select="'&#160;&#160;&#160;&#160;' ||
                     '123456789 123456789 123456789 123456789 123456789 1234567890'"/>
             </x:scenario>
             <x:scenario label="whose content exceeds truncation limit">
@@ -402,9 +403,9 @@
                 </x:context>
                 <x:call template="at:truncated-text-or-comment"/>
                 <x:expect label="Indentation, comment start, full text content, comment end"
-                    select="'&#160;&#160;&#160;&#160;' || 
-                    '&lt;!--' || 
-                    '123456789 123456789 123456789 123456789 123456789 1234567890' || 
+                    select="'&#160;&#160;&#160;&#160;' ||
+                    '&lt;!--' ||
+                    '123456789 123456789 123456789 123456789 123456789 1234567890' ||
                     '-->'"/>
             </x:scenario>
             <x:scenario label="whose content exceeds truncation limit">
@@ -415,8 +416,8 @@
                 <x:expect label="Indentation, comment start, truncated text content, ellipsis, comment end"
                     select="'&#160;&#160;&#160;&#160;' ||
                     '&lt;!--' ||
-                    '123456789 123456789 123456789 123456789 123456789 1234567890' || 
-                    '...' || 
+                    '123456789 123456789 123456789 123456789 123456789 1234567890' ||
+                    '...' ||
                     '-->'"/>
             </x:scenario>
         </x:scenario>
@@ -453,7 +454,7 @@
                 <h:span class="attrval">"1"</h:span>
                 <h:span class="attrname"> attr2=</h:span>
                 <h:span class="attrval">"2"</h:span>
-            </x:expect> 
+            </x:expect>
         </x:scenario>
         <x:scenario label="Empty sequence as input">
             <x:call function="at:list-attrs">
@@ -480,7 +481,7 @@
         </x:scenario>
     </x:scenario>
 
-    <!-- 
+    <!--
     This file is part of xslt-accumulator-tools.
 
     xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

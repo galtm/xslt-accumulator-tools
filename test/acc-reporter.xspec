@@ -10,9 +10,9 @@
     stylesheet="../acc-reporter.xsl"
     xslt-version="3.0">
 
-    <x:helper stylesheet="acc-indent-level-modified.xsl"/>
+    <x:import href="maven-helper.xspec"><!-- Defines $av:path-prefix --></x:import>
 
-    <x:param name="at:acc-decl-uri" as="xs:string" select="resolve-uri('../acc-indent-level-modified.xsl')"/>
+    <x:param name="at:acc-decl-uri" as="xs:string" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
     <x:param name="at:acc-name" as="xs:string" select="'indent-level-modified'"/>
 
     <x:variable name="av:tree" href="node-types.xml" as="document-node()"/>
@@ -24,9 +24,9 @@
                 test="exists(/h:html/h:body/h:table//h:td[.='Document node start'])"/>
         </x:scenario>
         <x:scenario label="Check that error-checking is performed here" catch="yes">
-            <x:context select="$av:tree">
-                <x:param name="at:acc-name" select="'nonexistent'"/>
-            </x:context>
+            <!-- Scenario-level override of global XSLT parameter requires run-as="external" -->
+            <x:param name="at:acc-name" select="'nonexistent'"/>
+            <x:context select="$av:tree"/>
             <x:expect label="Error"
                 test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
         </x:scenario>
@@ -91,7 +91,7 @@
     <x:scenario label="Tests for at:error-checking template">
         <x:scenario label="Non-error case">
             <x:call template="at:error-checking">
-                <x:param name="acc-decl-uri" select="resolve-uri('../acc-indent-level-modified.xsl')"/>
+                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
                 <x:param name="acc-name" select="$at:acc-name"/>
             </x:call>
             <x:expect label="Empty sequence and no error" select="()"/>
@@ -109,7 +109,7 @@
         </x:scenario>
         <x:scenario label="Accumulator not found" catch="yes">
             <x:call template="at:error-checking">
-                <x:param name="acc-decl-uri" select="resolve-uri('../acc-indent-level-modified.xsl')"/>
+                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
                 <x:param name="acc-name" select="'nonexistent'"/>
             </x:call>
             <x:expect label="Error"
@@ -120,7 +120,7 @@
         </x:scenario>
         <x:scenario label="Duplicate accumulator found" catch="yes">
             <x:call template="at:error-checking">
-                <x:param name="acc-decl-uri" select="resolve-uri('../acc-duplicate.xsl')"/>
+                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-duplicate.xsl')"/>
                 <x:param name="acc-name" select="'Q{http://github.com/galtm/xslt-accumulator-tools}acc'"/>
             </x:call>
             <x:expect label="Error"
@@ -131,7 +131,7 @@
         </x:scenario>
     </x:scenario>
 
-    <!-- 
+    <!--
     This file is part of xslt-accumulator-tools.
 
     xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
