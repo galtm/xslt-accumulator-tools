@@ -9,7 +9,7 @@ Use the `acc-reporter.xsl` stylesheet to generate an HTML report of accumulator 
 
 1. An XML file. Provide it as the source document for the transformation.
 
-1. Information about your accumulator. Specify it through either XSLT global parameters or top-level processing instructions in the XML source document, as the next table describes. (The parameter takes precedence over the processing instruction, if both appear.)
+1. Information about your accumulator. Specify it through either XSLT global parameters or top-level processing instructions ([example](https://github.com/galtm/xslt-accumulator-tools/blob/6784904baeb7c4b45242020284a67ee2f7215e1b/sample-acc/sample-xml/section-with-elements.xml#L2-4)) in the XML source document, as the next table describes. (The parameter takes precedence over the processing instruction, if both appear.)
 
 
 | Item | XSLT Parameter | Processing Instruction  |
