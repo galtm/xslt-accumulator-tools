@@ -12,12 +12,21 @@
     </xsl:accumulator>
 
     <xsl:template match="/" expand-text="1">
-        <!-- Output accumulator values as text -->
+        <!-- Output accumulator values in message text -->
         <xsl:for-each select="//body/h1">
-            <p>Before descendants of h1 #{position()}: {accumulator-before('word-count')}</p>
-            <p>After descendants of h1 #{position()}: {accumulator-after('word-count')}</p>
+            <xsl:message>Before descendants of h1 #{position()}: {
+                accumulator-before('word-count')
+            }
+            </xsl:message>
+            <xsl:message>After descendants of h1 #{position()}: {
+                accumulator-after('word-count')
+            }
+            </xsl:message>
         </xsl:for-each>
-        <p>At end of html element: {/html/accumulator-after('word-count')}</p>
+        <xsl:message>At end of html element: {
+            /html/accumulator-after('word-count')
+        }
+        </xsl:message>
 
         <!-- Other code in this template... -->
     </xsl:template>
