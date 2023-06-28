@@ -17,11 +17,11 @@
         <!-- Checks for accumulator values do not rely on $x:result or the
             template rule code but can be included in this scenario if desired. -->
         <x:expect
-            label="Accumulator: 1st remark has 1 internal-only element in stack"
+            label="Accumulator: At 1st remark, 1 element name in stack"
             test="($myv:tree//remark)[1]/accumulator-before('internal-elem')"
             select="('remark')"/>
         <x:expect
-            label="Accumulator: subsection remark has 2 internal-only elements in stack"
+            label="Accumulator: At subsection remark, 2 element names in stack"
             test="$myv:tree/section/section/remark/accumulator-before('internal-elem')"
             select="('remark', 'section')"/>
     </x:scenario>

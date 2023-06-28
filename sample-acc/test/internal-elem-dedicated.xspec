@@ -11,11 +11,11 @@
         <!-- x:call satisfies XSpec compiler -->
         <x:call function="true"/>
         <x:expect
-            label="Start of subsection remark has 2 internal-only elements in stack"
+            label="At start of subsection remark, 2 element names in stack"
             test="$myv:tree/section/section/remark/accumulator-before('internal-elem')"
             select="('remark', 'section')"/>
         <x:expect
-            label="End of subsection remark has 1 internal-only element in stack"
+            label="At end of subsection remark, 1 element name in stack"
             test="$myv:tree/section/section/remark/accumulator-after('internal-elem')"
             select="('section')"/>
         <x:expect
