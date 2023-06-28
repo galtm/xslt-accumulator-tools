@@ -13,7 +13,7 @@
                 <x:param select="$myv:tree/section/section/remark"/>
                 <x:param select="'internal-elem'"/>
             </x:call>
-            <x:expect label="2 internal-only elements in stack"
+            <x:expect label="2 element names in stack"
                 select="('remark', 'section')"/>
         </x:scenario>
         <x:scenario label="End of subsection remark">
@@ -21,7 +21,7 @@
                 <x:param select="$myv:tree/section/section/remark"/>
                 <x:param select="'internal-elem'"/>
             </x:call>
-            <x:expect label="1 internal-only element in stack"
+            <x:expect label="1 element name in stack"
                 select="('section')"/>
         </x:scenario>
         <x:scenario label="End of document">
