@@ -5,7 +5,12 @@ Utilities for exploring and testing XSLT accumulators, to complement an upcoming
 License: AGPL 3.0 or later
 
 ## Report of Accumulator Values
-Use the `acc-reporter.xsl` stylesheet to generate an HTML report of accumulator values associated with nodes of an XML file. This stylesheet requires the following information that you provide: 
+Use the `acc-reporter.xsl` stylesheet to generate an HTML report of accumulator values associated with nodes of an XML file.
+
+Here is a [sample](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/sample-acc/sample-xml/acc-report/word-count-sample-acc-report.html) that shows how the report looks.
+
+### Required Inputs
+The `acc-reporter.xsl` stylesheet requires the following information that you provide:
 
 1. An XML file. Provide it as the source document for the transformation.
 
@@ -40,8 +45,24 @@ The file `section-with-elements.xml` contains processing instructions that ident
 
 `java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:sample-acc/sample-xml/section-with-elements.xml -xsl:acc-reporter.xsl -o:section-with-elements-report.html {http://github.com/galtm/xslt-accumulator-tools}acc-name=Q{my-acc-ns}element-count {http://github.com/galtm/xslt-accumulator-tools}acc-decl-uri=../acc-decl-not-standalone.xsl {http://github.com/galtm/xslt-accumulator-tools}acc-parent-uri=../parent.xsl`
 
-### Sample Report
-Here is a [sample](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/sample-acc/sample-xml/acc-report/word-count-sample-acc-report.html) that shows how the report looks.
+### Variation: Generating Report Based on Tree Not in XML File
+You can generate an HTML report of accumulator values associated with nodes of a tree that your XSLT stylesheet defines in a variable, even if the tree is not saved to an XML file. In this situation, you do the following:
+
+1. Augment your XSLT stylesheet to supply data that the report generation code needs and to invoke it from a location of your code where the tree variable is in scope.
+1. Run your XSLT transformation.
+
+For an example that illustrates step 1, see this set of files:
+```
+sample-acc/tree-report-example.xsl
+sample-acc/glossary.xsl
+sample-acc/sample-xml/glossary.xml
+```
+
+If you generate an *XML-file-based* report for `glossary.xml`, you can see that the report shows glossary terms in the same sequence as in this XML file.
+
+If you generate a *tree-based* report by transforming the sample source document `glossary.xml` with the stylesheet `tree-report-example.xsl`, you can see that the reports show glossary terms in alphabetical order. That is because the `tree-report-example.xsl` stylesheet creates a tree in an XSLT variable by sorting the glossary terms from the XML source file.
+
+`java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:sample-acc/sample-xml/glossary.xml -xsl:sample-acc/tree-report-example.xsl`
 
 ## Helper for XSpec Tests for Accumulators
 Import the `accumulator-test-tools.xsl` file in an XSLT stylesheet that you want to test with XSpec via `run-as="external"`. An example of this test architecture is in the following file:

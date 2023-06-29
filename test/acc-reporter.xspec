@@ -30,6 +30,23 @@
             <x:expect label="Error"
                 test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
         </x:scenario>
+        <x:scenario label="$at:generate-tree-report=true in XSLT does not cause an error (because generated XSLT overrides that parameter)">
+            <!-- Scenario-level override of global XSLT parameters requires run-as="external" -->
+            <x:param name="at:acc-decl-uri" select="resolve-uri($av:path-prefix || '../sample-acc/glossary.xsl')"/>
+            <x:param name="at:acc-parent-uri" select="resolve-uri($av:path-prefix || '../sample-acc/tree-report-example.xsl')"/>
+            <x:param name="at:acc-name" select="'glossentry-position'"/>
+            <x:context select="doc(resolve-uri($av:path-prefix || '../sample-acc/sample-xml/glossary.xml'))"/>
+            <x:expect label="Sanity-check result" test="/h:html/h:body/h:h1">
+                <h:h1>Values of glossentry-position Accumulator for Tree in glossary.xml</h:h1>
+            </x:expect>
+            <x:expect label="Report reflects XML source document, not the XSLT sorting behavior"
+                test="//h:pre[contains(.,'triangle')]">
+                <h:pre>map{"position":1,"term":"triangle"}</h:pre>
+                <h:pre>map{"position":2,"term":"isosceles triangle"}</h:pre>
+                <h:pre>map{"position":3,"term":"equilateral triangle"}</h:pre>
+                <h:pre>map{"position":3,"term":"equilateral triangle"}</h:pre>
+            </x:expect>
+        </x:scenario>
     </x:scenario>
 
     <x:scenario label="Tests for at:transform-options template">
@@ -42,16 +59,17 @@
             </x:call>
             <x:expect label="Result is a map with the expected keys"
                 test="$x:result => map:keys() => sort()"
-                select="('delivery-format','initial-mode','source-node','stylesheet-node','stylesheet-params')"/>
+                select="('delivery-format','initial-template','source-node','stylesheet-node','stylesheet-params')"/>
             <x:expect label="Format is raw" test="$x:result('delivery-format')" select="'raw'"/>
-            <x:expect label="Initial mode is at:acc-view" test="$x:result('initial-mode')"
-                select="QName($av:ns, 'at:acc-view')"/>
+            <x:expect label="Initial template is at:process-root" test="$x:result('initial-template')"
+                select="QName($av:ns, 'at:process-root')"/>
             <x:expect label="Source node is from specified XML tree" test="$x:result('source-node')"
                 select="$av:tree"/>
-            <x:expect label="Stylesheet includes acc-report-inclusion.xsl and imports user XSLT"
+            <x:expect label="Stylesheet defines a static parameter, includes acc-report-inclusion.xsl, and imports user XSLT"
                 test="exists($x:result('stylesheet-node')/
                 self::xsl:transform[@version='3.0']/
-                xsl:include[@href='acc-report-inclusion.xsl']/
+                xsl:param[@name='at:generate-tree-report'][@static='yes'][@select='false()']/
+                following-sibling::xsl:include[@href='acc-report-inclusion.xsl']/
                 following-sibling::xsl:import[@href='user-xslt.xsl'])"/>
             <x:expect label="Stylesheet parameters are as expected"
                 test="$x:result('stylesheet-params') => map:keys()"

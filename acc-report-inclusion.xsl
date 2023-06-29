@@ -9,15 +9,23 @@
     exclude-result-prefixes="#all"
     version="3.0">
 
-    <xsl:mode name="at:acc-view" use-accumulators="#all" streamable="no"/>
-
+    <!-- ========== -->
+    <!-- PARAMETERS -->
     <xsl:param name="at:acc-decl-uri" as="xs:string" required="yes"/>
     <xsl:param name="at:acc-name" as="xs:string" required="yes"/>
     <xsl:param name="at:skip-whitespace" as="xs:boolean" select="true()"/>
     <xsl:param name="at:trunc" as="xs:integer" select="60"/>
 
+    <!-- ======= -->
     <!-- IMPORTS -->
     <xsl:import href="lib/xspec/src/compiler/base/util/compiler-eqname-utils.xsl"/>
+
+    <!-- ===== -->
+    <!-- MODES -->
+    <xsl:mode name="at:acc-view" use-accumulators="#all" streamable="no"/>
+
+    <!-- ============ -->
+    <!-- ACCUMULATORS -->
 
     <xsl:accumulator name="at:indent-level" as="xs:integer" initial-value="0">
         <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()"
@@ -30,15 +38,10 @@
     <!-- The at:two-value-queue accumulator stores another accumulator's
         last value and current value. -->
     <xsl:accumulator name="at:two-value-queue" initial-value="()" as="map(*)?">
-        <xsl:accumulator-rule match="document-node()">
+        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction() | document-node()"
+            phase="start">
             <xsl:map>
-                <xsl:map-entry key="'prior'" select="()"/>
-                <xsl:map-entry key="'current'" select="accumulator-before($at:acc-name)"/>
-            </xsl:map>
-        </xsl:accumulator-rule>
-        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()">
-            <xsl:map>
-                <xsl:map-entry key="'prior'" select="$value('current')"/>
+                <xsl:map-entry key="'prior'" select="if (exists($value)) then $value('current') else ()"/>
                 <xsl:map-entry key="'current'" select="accumulator-before($at:acc-name)"/>
             </xsl:map>
         </xsl:accumulator-rule>
@@ -61,19 +64,25 @@
         </xsl:accumulator-rule>
     </xsl:accumulator>
 
-    <xsl:template match="/" expand-text="1" mode="at:acc-view" as="element(h:html)">
+    <!-- ======================= -->
+    <!-- TEMPLATES AND FUNCTIONS -->
+
+    <xsl:template name="at:process-root" as="element(h:html)" expand-text="1">
+        <!-- Context item is document node or other root of tree -->
+        <xsl:context-item as="node()" use="required"/>
+
         <xsl:variable name="at:doc-file-name" as="xs:string"
             select="replace(base-uri(),'^.*/','')"/>
         <html>
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-                <title>Values of {$at:acc-name} Accumulator for Document {$at:doc-file-name}</title>
+                <title>Values of {$at:acc-name} Accumulator for Tree in {$at:doc-file-name}</title>
                 <style type="text/css">{
                     unparsed-text-lines('acc-report.css') => string-join('&#10;')
                 }</style>
             </head>
             <body>
-                <h1>Values of {$at:acc-name} Accumulator for Document {$at:doc-file-name}</h1>
+                <h1>Values of {$at:acc-name} Accumulator for Tree in {$at:doc-file-name}</h1>
                 <p>Document URI: <code>{base-uri(.) => at:truncate-uri()}</code></p>
                 <p>Accumulator declaration URI: <code>{$at:acc-decl-uri => at:truncate-uri()}</code></p>
                 <xsl:call-template name="at:show-declaration"/>
@@ -83,35 +92,39 @@
                         <th>Value, Changed or Document Start/End</th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <em>Document node start</em>
-                            </td>
-                            <td>
-                                <xsl:variable name="current-before" select="accumulator-before($at:acc-name)"/>
-                                <xsl:call-template name="at:acc-value-if-changed">
-                                    <xsl:with-param name="acc-value" select="$current-before"/>
-                                    <xsl:with-param name="acc-prior-value" select="if (empty($current-before)) then 1 else ()"/>
-                                </xsl:call-template>
-                            </td>
-                        </tr>
-                        <xsl:apply-templates mode="#current"/>
-                        <tr>
-                            <td>
-                                <em>Document node end</em>
-                            </td>
-                            <td>
-                                <xsl:variable name="current-after" select="accumulator-after($at:acc-name)"/>
-                                <xsl:call-template name="at:acc-value-if-changed">
-                                    <xsl:with-param name="acc-value" select="$current-after"/>
-                                    <xsl:with-param name="acc-prior-value" select="if (empty($current-after)) then 1 else ()"/>
-                                </xsl:call-template>
-                            </td>
-                        </tr>
+                        <xsl:apply-templates select="." mode="at:acc-view"/>
                     </tbody>
                 </table>
             </body>
         </html>
+    </xsl:template>
+
+    <xsl:template match="document-node()" mode="at:acc-view" as="element(h:tr)+">
+        <tr>
+            <td>
+                <em>Document node start</em>
+            </td>
+            <td>
+                <xsl:variable name="current-before" select="accumulator-before($at:acc-name)"/>
+                <xsl:call-template name="at:acc-value-if-changed">
+                    <xsl:with-param name="acc-value" select="$current-before"/>
+                    <xsl:with-param name="acc-prior-value" select="if (empty($current-before)) then 1 else ()"/>
+                </xsl:call-template>
+            </td>
+        </tr>
+        <xsl:apply-templates mode="#current"/>
+        <tr>
+            <td>
+                <em>Document node end</em>
+            </td>
+            <td>
+                <xsl:variable name="current-after" select="accumulator-after($at:acc-name)"/>
+                <xsl:call-template name="at:acc-value-if-changed">
+                    <xsl:with-param name="acc-value" select="$current-after"/>
+                    <xsl:with-param name="acc-prior-value" select="if (empty($current-after)) then 1 else ()"/>
+                </xsl:call-template>
+            </td>
+        </tr>
     </xsl:template>
 
     <xsl:template match="element()" mode="at:acc-view" expand-text="1"
@@ -301,7 +314,7 @@
             '.../' || $repo-sample-acc)"/>
     </xsl:function>
 
-    <!-- 
+    <!--
     This file is part of xslt-accumulator-tools.
 
     xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

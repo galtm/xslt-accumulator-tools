@@ -60,62 +60,35 @@
                 <one><two>three <three>four<?no-indent PI is not indented ?></three></two></one>
             </x:variable>
             <x:call function="true"/>
+            <x:like label="at:prior-value accumulator values for nodes other than document node"/>
             <x:expect label="At start of document node, result is () because there is no prior value"
                 test="$av:tree/self::document-node()/accumulator-before('at:prior-value')"
                 select="()"/>
-            <x:expect label="At start of element 'one', prior indent level is 0"
-                test="$av:tree/one/accumulator-before('at:prior-value')"
-                select="0"/>
-            <x:expect label="At start of element 'two', prior indent level is 1"
-                test="$av:tree//two/accumulator-before('at:prior-value')"
-                select="1"/>
-            <x:expect label="At start of text node 'three', prior indent level is 2"
-                test="$av:tree//two/text()[.='three ']/accumulator-before('at:prior-value')"
-                select="2"/>
-            <x:expect label="At end of text node 'three', prior indent level is 3"
-                test="$av:tree//two/text()[.='three ']/accumulator-after('at:prior-value')"
-                select="3"/>
-            <x:expect label="At start of element 'three', prior indent level is 2"
-                test="$av:tree//three/accumulator-before('at:prior-value')"
-                select="2"/>
-            <x:expect label="At start of text node 'four', prior indent level is 3"
-                test="$av:tree//three/text()[.='four']/accumulator-before('at:prior-value')"
-                select="3"/>
-            <x:expect label="At end of text node 'four', prior indent level is 4"
-                test="$av:tree//three/text()[.='four']/accumulator-after('at:prior-value')"
-                select="4"/>
-            <x:expect label="At start of PI 'no-indent', prior indent level is 3"
-                test="$av:tree//processing-instruction('no-indent')/accumulator-before('at:prior-value')"
-                select="3"/>
-            <x:expect label="At end of PI 'no-indent', prior indent level is 3"
-                test="$av:tree//processing-instruction('no-indent')/accumulator-after('at:prior-value')"
-                select="3"/>
-            <x:expect label="At end of element 'three', prior indent level is 3"
-                test="$av:tree//three/accumulator-after('at:prior-value')"
-                select="3"/>
-            <x:expect label="At end of element 'two', prior indent level is 2"
-                test="$av:tree//two/accumulator-after('at:prior-value')"
-                select="2"/>
-            <x:expect label="At end of element 'one', prior indent level is 1"
-                test="$av:tree//one/accumulator-after('at:prior-value')"
-                select="1"/>
             <x:expect label="At end of document node, prior indent level is 0"
                 test="$av:tree/self::document-node()/accumulator-after('at:prior-value')"
                 select="0"/>
         </x:scenario>
+        <x:scenario label="Repeat basic sanity check for a tree rooted at an element">
+            <x:variable name="av:tree" as="element(one)">
+                <one><two>three <three>four<?no-indent PI is not indented ?></three></two></one>
+            </x:variable>
+            <x:call function="true"/>
+            <x:like label="at:prior-value accumulator values for nodes other than document node"/>
+        </x:scenario>
     </x:scenario>
 
-    <x:scenario label="Tests for match='/' template">
-        <x:context mode="at:acc-view" href="one-element-tree.xml" select="/"/>
+    <x:scenario label="Tests for at:process-root template">
+        <x:context href="one-element-tree.xml" select="/"/>
+        <x:call template="at:process-root"/>
         <x:expect label="Overall structure of HTML report">
             <h:html>
                 <h:head>
                     <h:meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-                    <h:title>Values of indent-level-modified Accumulator for Document one-element-tree.xml</h:title>
+                    <h:title>Values of indent-level-modified Accumulator for Tree in one-element-tree.xml</h:title>
                     <h:style type="text/css">...</h:style>
                 </h:head>
                 <h:body>
-                    <h:h1>Values of indent-level-modified Accumulator for Document one-element-tree.xml</h:h1>
+                    <h:h1>Values of indent-level-modified Accumulator for Tree in one-element-tree.xml</h:h1>
                     <h:p>Document URI: <h:code>...</h:code></h:p>
                     <h:p>Accumulator declaration URI: <h:code>test/acc-indent-level-modified.xsl</h:code></h:p>
                     <h:details>
@@ -153,7 +126,27 @@
             test="ends-with($x:result/self::h:html/h:body/h:p[1]/h:code,'/test/one-element-tree.xml')"/>
     </x:scenario>
 
-    <x:scenario label="Tests for match='element()' template">
+    <x:scenario label="Tests for match='document-node()' mode='at:acc-view' template">
+        <x:context mode="at:acc-view" href="one-element-tree.xml" select="/"/>
+        <x:expect label="Row for document node start, more rows, and then row for document node end">
+            <h:tr>
+                <h:td>
+                    <h:em>Document node start</h:em>
+                </h:td>
+                <h:td><h:pre>0</h:pre></h:td>
+            </h:tr>
+            <h:tr>...</h:tr>
+            <h:tr>...</h:tr>
+            <h:tr>
+                <h:td>
+                    <h:em>Document node end</h:em>
+                </h:td>
+                <h:td><h:pre>0</h:pre></h:td>
+            </h:tr>
+        </x:expect>
+    </x:scenario>
+
+    <x:scenario label="Tests for match='element()' mode='at:acc-view' template">
         <x:scenario label="Element with no children other than attributes">
             <x:context mode="at:acc-view" select="/p">
                 <p attr="1"/>
@@ -218,7 +211,7 @@
         </x:scenario>
     </x:scenario>
 
-    <x:scenario label="Tests for match='text()' template">
+    <x:scenario label="Tests for match='text()' mode='at:acc-view' template">
         <x:scenario label="Whitespace-only text node that should be skipped">
             <x:context mode="at:acc-view" select="/descendant::text()"><p><x:text> </x:text></p></x:context>
             <x:expect label="Empty sequence" select="()"/>
@@ -243,7 +236,7 @@
         </x:scenario>
     </x:scenario>
 
-    <x:scenario label="Tests for match='comment()' template">
+    <x:scenario label="Tests for match='comment()' mode='at:acc-view' template">
         <x:context mode="at:acc-view" select="/p/comment()"><p><!--Comment text--></p></x:context>
         <x:expect label="Table row with two cells">
             <h:tr>
@@ -262,7 +255,7 @@
         </x:expect>
     </x:scenario>
 
-    <x:scenario label="Tests for match='processing-instruction()' template">
+    <x:scenario label="Tests for match='processing-instruction()' mode='at:acc-view' template">
         <x:scenario label="Special PI 'acc-decl-uri'">
             <x:context mode="at:acc-view" select="/processing-instruction()"><?acc-decl-uri xyz?></x:context>
             <x:expect label="Empty sequence" select="()"/>
@@ -479,6 +472,50 @@
             <x:expect label="Ellipsis followed by path from this repository onward"
                 select="'file:/C:/arbitrary/location/some/file.xml'"/>
         </x:scenario>
+    </x:scenario>
+
+    <!-- This shared scenario has assertions for testing the at:prior-value
+        accumulator at nodes of a particular tree rooted at the <one> element
+        or its document-node parent node. The scenario that references this one
+        via x:like defines $av:tree as a tree rooted at either an element
+        or a document node. -->
+    <x:scenario shared="yes" label="at:prior-value accumulator values for nodes other than document node">
+        <x:expect label="At start of element 'one', prior indent level is 0"
+            test="$av:tree/descendant-or-self::one/accumulator-before('at:prior-value')"
+            select="0"/>
+        <x:expect label="At start of element 'two', prior indent level is 1"
+            test="$av:tree//two/accumulator-before('at:prior-value')"
+            select="1"/>
+        <x:expect label="At start of text node 'three', prior indent level is 2"
+            test="$av:tree//two/text()[.='three ']/accumulator-before('at:prior-value')"
+            select="2"/>
+        <x:expect label="At end of text node 'three', prior indent level is 3"
+            test="$av:tree//two/text()[.='three ']/accumulator-after('at:prior-value')"
+            select="3"/>
+        <x:expect label="At start of element 'three', prior indent level is 2"
+            test="$av:tree//three/accumulator-before('at:prior-value')"
+            select="2"/>
+        <x:expect label="At start of text node 'four', prior indent level is 3"
+            test="$av:tree//three/text()[.='four']/accumulator-before('at:prior-value')"
+            select="3"/>
+        <x:expect label="At end of text node 'four', prior indent level is 4"
+            test="$av:tree//three/text()[.='four']/accumulator-after('at:prior-value')"
+            select="4"/>
+        <x:expect label="At start of PI 'no-indent', prior indent level is 3"
+            test="$av:tree//processing-instruction('no-indent')/accumulator-before('at:prior-value')"
+            select="3"/>
+        <x:expect label="At end of PI 'no-indent', prior indent level is 3"
+            test="$av:tree//processing-instruction('no-indent')/accumulator-after('at:prior-value')"
+            select="3"/>
+        <x:expect label="At end of element 'three', prior indent level is 3"
+            test="$av:tree//three/accumulator-after('at:prior-value')"
+            select="3"/>
+        <x:expect label="At end of element 'two', prior indent level is 2"
+            test="$av:tree//two/accumulator-after('at:prior-value')"
+            select="2"/>
+        <x:expect label="At end of element 'one', prior indent level is 1"
+            test="$av:tree/descendant-or-self::one/accumulator-after('at:prior-value')"
+            select="1"/>
     </x:scenario>
 
     <!--

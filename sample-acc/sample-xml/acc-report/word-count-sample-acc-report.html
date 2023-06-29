@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml">
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      <title>Values of word-count Accumulator for Document word-count-sample.xml</title>
+      <title>Values of word-count Accumulator for Tree in word-count-sample.xml</title>
       <style type="text/css">
 .pi       {color: #8B26C9;}
 .comment  {color: #006400;}
@@ -17,17 +17,17 @@ th, td { padding: 0px 8px 0px 8px; }
 th { background-color: #0072AA; color: #EEEEEE; padding: 5px 5px;}</style>
    </head>
    <body>
-      <h1>Values of word-count Accumulator for Document word-count-sample.xml</h1>
+      <h1>Values of word-count Accumulator for Tree in word-count-sample.xml</h1>
       <p>Document URI: <code>.../xslt-accumulator-tools/sample-acc/sample-xml/word-count-sample.xml</code></p>
       <p>Accumulator declaration URI: <code>.../xslt-accumulator-tools/sample-acc/word-count.xsl</code></p>
       <details>
          <summary>Declaration</summary>
          <pre>
 &lt;xsl:accumulator xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                 name="word-count"
-                 as="xs:integer"
-                 initial-value="0"&gt;
+                  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                  name="word-count"
+                  as="xs:integer"
+                  initial-value="0"&gt;
    &lt;xsl:accumulator-rule match="text()" select="$value + count(tokenize(.))"/&gt;
 &lt;/xsl:accumulator&gt;
 </pre>

@@ -19,7 +19,9 @@
         <plugins>
 
             <!-- "mvn xml:transform" generates accumulator reports for
-                 all *.xml files in the sample-acc/sample-xml folder. -->
+                 - All *.xml files in the sample-acc/sample-xml folder
+                 - The two trees defined in sample-acc/tree-report-example.xsl
+            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>xml-maven-plugin</artifactId>
@@ -51,6 +53,13 @@
                                     <targetExtension>.html</targetExtension>
                                 </fileMapper>
                             </fileMappers>
+                        </transformationSet>
+                        <transformationSet>
+                            <dir>sample-acc/sample-xml</dir>
+                            <stylesheet>sample-acc/tree-report-example.xsl</stylesheet>
+                            <includes>
+                                <include>glossary.xml</include>
+                            </includes>
                         </transformationSet>
                     </transformationSets>
                 </configuration>

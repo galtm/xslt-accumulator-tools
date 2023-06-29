@@ -63,6 +63,13 @@
         <xsl:param name="source" as="document-node()"/>
         <xsl:variable name="combined-transform" as="element()">
             <genxsl:transform version="3.0" exclude-result-prefixes="#all">
+                <!-- Disable tree-based report generation to prevent
+                    acc-report-inclusion.xsl from being included twice. -->
+                <genxsl:param name="at:generate-tree-report" select="false()"
+                    as="xs:boolean" static="yes">
+                    <xsl:namespace name="at" select="'http://github.com/galtm/xslt-accumulator-tools'"/>
+                    <xsl:namespace name="xs" select="'http://www.w3.org/2001/XMLSchema'"/>
+                </genxsl:param>
                 <genxsl:include href="acc-report-inclusion.xsl"/>
                 <genxsl:import href="{($acc-parent-uri,$acc-decl-uri)[1]}"/>
             </genxsl:transform>
@@ -70,7 +77,7 @@
         <xsl:variable name="transform-options" as="map(xs:string, item()*)">
             <xsl:map>
                 <xsl:map-entry key="'delivery-format'" select="'raw'"/>
-                <xsl:map-entry key="'initial-mode'" select="xs:QName('at:acc-view')"/>
+                <xsl:map-entry key="'initial-template'" select="xs:QName('at:process-root')"/>
                 <xsl:map-entry key="'source-node'" select="$source"/>
                 <xsl:map-entry key="'stylesheet-node'" select="$combined-transform"/>
                 <xsl:map-entry key="'stylesheet-params'">
@@ -115,7 +122,7 @@
         </xsl:choose>
     </xsl:template>
 
-    <!-- 
+    <!--
     This file is part of xslt-accumulator-tools.
 
     xslt-accumulator-tools is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
