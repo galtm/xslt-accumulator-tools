@@ -19,9 +19,6 @@
     <!-- IMPORTS -->
     <xsl:import href="lib/xspec/src/compiler/base/util/compiler-eqname-utils.xsl"/>
 
-    <!-- MODES -->
-    <xsl:mode name="at:acc-view" use-accumulators="#all"/>
-
     <!-- ALIASES -->
     <xsl:namespace-alias stylesheet-prefix="genxsl" result-prefix="xsl"/>
 
