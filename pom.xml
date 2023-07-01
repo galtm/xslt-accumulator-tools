@@ -17,6 +17,45 @@
     </properties>
     <build>
         <plugins>
+
+            <!-- "mvn xml:transform" generates accumulator reports for
+                 all *.xml files in the sample-acc/sample-xml folder. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.saxon</groupId>
+                        <artifactId>Saxon-HE</artifactId>
+                        <version>${saxon.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <transformationSets>
+                        <transformationSet>
+                            <dir>sample-acc/sample-xml</dir>
+                            <stylesheet>acc-reporter.xsl</stylesheet>
+                            <includes>
+                                <include>*.xml</include>
+                            </includes>
+                            <fileMappers>
+                                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                                    <targetExtension>.html</targetExtension>
+                                </fileMapper>
+                            </fileMappers>
+                        </transformationSet>
+                    </transformationSets>
+                </configuration>
+            </plugin>
+
             <!-- "mvn test" runs XSpec tests -->
             <!-- https://github.com/nkutsche/xspec-maven-plugin does not seem to have
                 the issue logged in https://github.com/xspec/xspec-maven-plugin-1/issues/65 -->
