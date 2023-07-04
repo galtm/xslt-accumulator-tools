@@ -264,8 +264,8 @@
             <x:context mode="at:acc-view" select="/processing-instruction()"><?acc-name xyz?></x:context>
             <x:expect label="Empty sequence" select="()"/>
         </x:scenario>
-        <x:scenario label="Special PI 'acc-parent-uri'">
-            <x:context mode="at:acc-view" select="/processing-instruction()"><?acc-parent-uri xyz?></x:context>
+        <x:scenario label="Special PI 'acc-toplevel-uri'">
+            <x:context mode="at:acc-view" select="/processing-instruction()"><?acc-toplevel-uri xyz?></x:context>
             <x:expect label="Empty sequence" select="()"/>
         </x:scenario>
         <x:scenario label="Typical user-defined processing instruction">

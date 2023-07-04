@@ -24,7 +24,7 @@ The `src/acc-reporter.xsl` stylesheet requires the following information that yo
 |---|---|---|
 | Accumulator name  | `$at:acc-name`  |  `<?acc-name my-accumulator-name?>` |
 | URI of XSLT file containing accumulator declaration, relative to the XML file's base URI  | `$at:acc-decl-uri` | `<?acc-decl-uri my-accumulator-declaration-uri?>` |
-| URI of top-level XSLT module, if different from the file containing the accumulator declaration, relative to the XML file's base URI | `$at:acc-parent-uri` | `<?acc-parent-uri my-main-xslt-uri?>`  |
+| URI of top-level XSLT module, if different from the file containing the accumulator declaration, relative to the XML file's base URI | `$at:acc-toplevel-uri` | `<?acc-toplevel-uri my-main-xslt-uri?>`  |
 
 
 In the notation above, the `at` prefix is associated with the `http://github.com/galtm/xslt-accumulator-tools` namespace.
@@ -46,7 +46,7 @@ From your clone of this repository, you can execute a command like the following
 
 The file `section-with-elements.xml` contains processing instructions that identify the relevant XSLT modules and the accumulator name, so the command above does not need to pass in any global parameter values. In the absence of those processing instructions, your command would have looked like this:
 
-`java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:src/sample-acc/sample-xml/section-with-elements.xml -xsl:src/acc-reporter.xsl -o:section-with-elements-report.html {http://github.com/galtm/xslt-accumulator-tools}acc-name=Q{my-acc-ns}element-count {http://github.com/galtm/xslt-accumulator-tools}acc-decl-uri=../acc-decl-not-standalone.xsl {http://github.com/galtm/xslt-accumulator-tools}acc-parent-uri=../parent.xsl`
+`java -cp "...path to Saxon jar file..." net.sf.saxon.Transform -t -s:src/sample-acc/sample-xml/section-with-elements.xml -xsl:src/acc-reporter.xsl -o:section-with-elements-report.html {http://github.com/galtm/xslt-accumulator-tools}acc-name=Q{my-acc-ns}element-count {http://github.com/galtm/xslt-accumulator-tools}acc-decl-uri=../acc-decl-not-standalone.xsl {http://github.com/galtm/xslt-accumulator-tools}acc-toplevel-uri=../parent.xsl`
 
 ### Variation: Generating Report Based on Tree Not in XML File
 You can generate an HTML report of accumulator values associated with nodes of a tree that your XSLT stylesheet defines in a variable, even if the tree is not saved to an XML file. In this situation, you do the following:

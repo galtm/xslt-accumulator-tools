@@ -185,7 +185,7 @@
 
     <xsl:template match="processing-instruction()" mode="at:acc-view"
         expand-text="1" as="element(h:tr)?">
-        <xsl:if test="not(name(.)=('acc-decl-uri','acc-name','acc-parent-uri'))">
+        <xsl:if test="not(name(.)=('acc-decl-uri','acc-name','acc-toplevel-uri'))">
             <tr>
                 <td>
                     <span class="pi">
