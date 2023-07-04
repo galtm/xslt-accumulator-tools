@@ -68,7 +68,7 @@
             href="{
                 base-uri()
                 => replace('\.xml$','-doc-tree-acc-report.html')
-                => replace('/sample-acc/sample-xml/','/target/generated-resources/xml/xslt/')
+                => replace('/src/sample-acc/sample-xml/','/target/generated-resources/xml/xslt/')
             }">
             <xsl:for-each select="$sorted-glossary-doc">
                 <xsl:call-template name="at:process-root"/>
@@ -78,7 +78,7 @@
             href="{
             base-uri()
             => replace('\.xml$','-elem-tree-acc-report.html')
-            => replace('/sample-acc/sample-xml/','/target/generated-resources/xml/xslt/')
+            => replace('/src/sample-acc/sample-xml/','/target/generated-resources/xml/xslt/')
             }">
             <xsl:for-each select="$sorted-glossary-elem">
                 <xsl:call-template name="at:process-root"/>
