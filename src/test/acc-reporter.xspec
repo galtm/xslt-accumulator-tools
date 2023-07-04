@@ -33,7 +33,7 @@
         <x:scenario label="$at:generate-tree-report=true in XSLT does not cause an error (because generated XSLT overrides that parameter)">
             <!-- Scenario-level override of global XSLT parameters requires run-as="external" -->
             <x:param name="at:acc-decl-uri" select="resolve-uri($av:path-prefix || '../sample-acc/glossary.xsl')"/>
-            <x:param name="at:acc-parent-uri" select="resolve-uri($av:path-prefix || '../sample-acc/tree-report-example.xsl')"/>
+            <x:param name="at:acc-toplevel-uri" select="resolve-uri($av:path-prefix || '../sample-acc/tree-report-example.xsl')"/>
             <x:param name="at:acc-name" select="'glossentry-position'"/>
             <x:context select="doc(resolve-uri($av:path-prefix || '../sample-acc/sample-xml/glossary.xml'))"/>
             <x:expect label="Sanity-check result" test="/h:html/h:body/h:h1">
@@ -51,7 +51,7 @@
 
     <x:scenario label="Tests for at:transform-options template">
         <x:variable name="av:ns" as="xs:string" select="'http://github.com/galtm/xslt-accumulator-tools'"/>
-        <x:scenario label="Accumulator declaration is in top-level XSLT file, so acc-parent-uri is omitted">
+        <x:scenario label="Accumulator declaration is in top-level XSLT file, so acc-toplevel-uri is omitted">
             <x:call template="at:transform-options">
                 <x:param name="acc-decl-uri" select="'user-xslt.xsl'"/>
                 <x:param name="acc-name" select="'name'"/>
@@ -80,11 +80,11 @@
                     QName($av:ns,'at:acc-decl-uri')
                 )"/>
         </x:scenario>
-        <x:scenario label="Accumulator declaration is in subordinate XSLT file, so acc-parent-uri is provided separately">
+        <x:scenario label="Accumulator declaration is in subordinate XSLT file, so acc-toplevel-uri is provided separately">
             <x:call template="at:transform-options">
                 <x:param name="acc-decl-uri" select="'user-xslt-with-accumulator-declaration.xsl'"/>
                 <x:param name="acc-name" select="'name'"/>
-                <x:param name="acc-parent-uri" select="'user-main-xslt.xsl'"/>
+                <x:param name="acc-toplevel-uri" select="'user-main-xslt.xsl'"/>
                 <x:param name="source" select="$av:tree"/>
             </x:call>
             <x:expect label="Stylesheet includes acc-report-inclusion.xsl and imports parent XSLT"
@@ -92,7 +92,7 @@
                 self::xsl:transform[@version='3.0']/
                 xsl:include[@href='acc-report-inclusion.xsl']/
                 following-sibling::xsl:import[@href='user-main-xslt.xsl'])"/>
-            <x:expect label="Stylesheet parameters are as expected (and do not include at:acc-parent-uri)"
+            <x:expect label="Stylesheet parameters are as expected (and do not include at:acc-toplevel-uri)"
                 test="$x:result('stylesheet-params') => map:keys()"
                 select="(
                 QName($av:ns,'at:acc-name'),

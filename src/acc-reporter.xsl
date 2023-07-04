@@ -11,7 +11,7 @@
     <!-- PARAMETERS -->
     <xsl:param name="at:acc-decl-uri" as="xs:string?"/>
     <xsl:param name="at:acc-name" as="xs:string?"/>
-    <xsl:param name="at:acc-parent-uri" as="xs:string?"/>
+    <xsl:param name="at:acc-toplevel-uri" as="xs:string?"/>
 
     <xsl:param name="at:skip-whitespace" as="xs:boolean" select="true()"/>
     <xsl:param name="at:trunc" as="xs:integer" select="60"/>
@@ -32,11 +32,11 @@
             select="if ($at:acc-name != '')
             then $at:acc-name
             else processing-instruction(acc-name)/normalize-space()"/>
-        <xsl:param name="acc-parent-uri" as="xs:string?"
-            select="(if ($at:acc-parent-uri != '')
-            then $at:acc-parent-uri
-            else if (processing-instruction(acc-parent-uri)/normalize-space())
-            then processing-instruction(acc-parent-uri)/normalize-space()
+        <xsl:param name="acc-toplevel-uri" as="xs:string?"
+            select="(if ($at:acc-toplevel-uri != '')
+            then $at:acc-toplevel-uri
+            else if (processing-instruction(acc-toplevel-uri)/normalize-space())
+            then processing-instruction(acc-toplevel-uri)/normalize-space()
             else ())
             => resolve-uri(base-uri())"/>
 
@@ -48,7 +48,7 @@
             <xsl:call-template name="at:transform-options">
                 <xsl:with-param name="acc-decl-uri" select="$acc-decl-uri"/>
                 <xsl:with-param name="acc-name" select="$acc-name"/>
-                <xsl:with-param name="acc-parent-uri" select="$acc-parent-uri"/>
+                <xsl:with-param name="acc-toplevel-uri" select="$acc-toplevel-uri"/>
                 <xsl:with-param name="source" select="."/>
             </xsl:call-template>
         </xsl:variable>
@@ -59,7 +59,7 @@
     <xsl:template name="at:transform-options" as="map(xs:string, item()*)">
         <xsl:param name="acc-decl-uri" as="xs:string"/>
         <xsl:param name="acc-name" as="xs:string"/>
-        <xsl:param name="acc-parent-uri" as="xs:string?"/>
+        <xsl:param name="acc-toplevel-uri" as="xs:string?"/>
         <xsl:param name="source" as="document-node()"/>
         <xsl:variable name="combined-transform" as="element()">
             <genxsl:transform version="3.0" exclude-result-prefixes="#all">
@@ -71,7 +71,7 @@
                     <xsl:namespace name="xs" select="'http://www.w3.org/2001/XMLSchema'"/>
                 </genxsl:param>
                 <genxsl:include href="acc-report-inclusion.xsl"/>
-                <genxsl:import href="{($acc-parent-uri,$acc-decl-uri)[1]}"/>
+                <genxsl:import href="{($acc-toplevel-uri,$acc-decl-uri)[1]}"/>
             </genxsl:transform>
         </xsl:variable>
         <xsl:variable name="transform-options" as="map(xs:string, item()*)">
