@@ -8,7 +8,7 @@
 
     <x:variable name="av:path-prefix" as="xs:string"
         select="if (static-base-uri() => contains('/target/') (: Maven copies XSpec files to target/ :) )
-        then '../../../test/'
+        then '../../../src/test/'
         else '../'"
     />
 

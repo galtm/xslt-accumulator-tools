@@ -112,7 +112,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/acc-reporter.xsl</String>
+                                    <String>${pdu}/src/acc-reporter.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>

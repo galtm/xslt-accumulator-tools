@@ -43,8 +43,8 @@
                 <configuration>
                     <transformationSets>
                         <transformationSet>
-                            <dir>sample-acc/sample-xml</dir>
-                            <stylesheet>acc-reporter.xsl</stylesheet>
+                            <dir>src/sample-acc/sample-xml</dir>
+                            <stylesheet>src/acc-reporter.xsl</stylesheet>
                             <includes>
                                 <include>*.xml</include>
                             </includes>
@@ -55,8 +55,8 @@
                             </fileMappers>
                         </transformationSet>
                         <transformationSet>
-                            <dir>sample-acc/sample-xml</dir>
-                            <stylesheet>sample-acc/tree-report-example.xsl</stylesheet>
+                            <dir>src/sample-acc/sample-xml</dir>
+                            <stylesheet>src/sample-acc/tree-report-example.xsl</stylesheet>
                             <includes>
                                 <include>glossary.xml</include>
                             </includes>
@@ -100,11 +100,11 @@
                     <generateSurefireReport>true</generateSurefireReport>
                     <testDir>${project.basedir}</testDir>
                     <includes>
-                        <include>sample-acc/test/*.xspec</include>
-                        <include>test/*.xspec</include>
+                        <include>src/sample-acc/test/*.xspec</include>
+                        <include>src/test/*.xspec</include>
                     </includes>
                     <excludes>
-                        <exclude>test/maven-helper.xspec</exclude>
+                        <exclude>src/test/maven-helper.xspec</exclude>
                     </excludes>
                 </configuration>
             </plugin>
