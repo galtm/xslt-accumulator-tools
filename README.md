@@ -10,7 +10,7 @@ License: AGPL 3.0 or later
 ## Report of Accumulator Values
 Use the `src/acc-reporter.xsl` stylesheet to generate an HTML report of accumulator values associated with nodes of an XML file.
 
-Here is a [sample](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/sample-acc/sample-xml/acc-report/word-count-sample-acc-report.html) that shows how the report looks.
+Here is a [sample](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/src/sample-acc/sample-xml/acc-report/word-count-sample-acc-report.html) that shows how the report looks.
 
 ### Required Inputs
 The `src/acc-reporter.xsl` stylesheet requires the following information that you provide:
