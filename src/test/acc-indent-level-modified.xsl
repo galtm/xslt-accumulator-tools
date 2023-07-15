@@ -8,9 +8,9 @@
     <xsl:mode use-accumulators="indent-level-modified"/>
 
     <xsl:accumulator name="indent-level-modified" as="xs:integer" initial-value="0">
-        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()"
+        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()[not(name(.)=('no-indent','add-ten'))]"
             select="$value + 1"/>
-        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()"
+        <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()[not(name(.)=('no-indent','add-ten'))]"
             phase="end"
             select="$value - 1"/>
 
