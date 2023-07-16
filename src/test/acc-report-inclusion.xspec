@@ -460,10 +460,10 @@
     <x:scenario label="Tests for at:truncate-uri function">
         <x:scenario label="URI is in this repository">
             <x:call function="at:truncate-uri">
-                <x:param select="'file:/C:/arbitrary/location/xslt-accumulator-tools/sample-acc/some/file.xml'"/>
+                <x:param select="'file:/C:/arbitrary/location/xslt-accumulator-tools/src/sample-acc/some/file.xml'"/>
             </x:call>
             <x:expect label="Ellipsis followed by path from this repository onward"
-                select="'.../xslt-accumulator-tools/sample-acc/some/file.xml'"/>
+                select="'.../xslt-accumulator-tools/src/sample-acc/some/file.xml'"/>
         </x:scenario>
         <x:scenario label="Arbitrary URI">
             <x:call function="at:truncate-uri">

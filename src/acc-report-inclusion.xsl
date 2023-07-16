@@ -309,7 +309,7 @@
     <xsl:function name="at:truncate-uri" as="xs:string">
         <xsl:param name="uri" as="xs:string?"/>
         <xsl:variable name="repo-sample-acc" as="xs:string"
-            select="'xslt-accumulator-tools/sample-acc'"/>
+            select="'xslt-accumulator-tools/src/sample-acc'"/>
         <xsl:sequence select="replace($uri,'^.*' || $repo-sample-acc,
             '.../' || $repo-sample-acc)"/>
     </xsl:function>
