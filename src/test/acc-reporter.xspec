@@ -12,8 +12,8 @@
 
     <x:import href="maven-helper.xspec"><!-- Defines $av:path-prefix --></x:import>
 
-    <x:param name="at:acc-decl-uri" as="xs:string" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
-    <x:param name="at:acc-name" as="xs:string" select="'indent-level-modified'"/>
+    <x:param name="acc-decl-uri" as="xs:string" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
+    <x:param name="acc-name" as="xs:string" select="'indent-level-modified'"/>
 
     <x:variable name="av:tree" href="node-types.xml" as="document-node()"/>
 
@@ -25,16 +25,16 @@
         </x:scenario>
         <x:scenario label="Check that error-checking is performed here" catch="yes">
             <!-- Scenario-level override of global XSLT parameter requires run-as="external" -->
-            <x:param name="at:acc-name" select="'nonexistent'"/>
+            <x:param name="acc-name" select="'nonexistent'"/>
             <x:context select="$av:tree"/>
             <x:expect label="Error"
                 test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
         </x:scenario>
         <x:scenario label="$at:generate-tree-report=true in XSLT does not cause an error (because generated XSLT overrides that parameter)">
             <!-- Scenario-level override of global XSLT parameters requires run-as="external" -->
-            <x:param name="at:acc-decl-uri" select="resolve-uri($av:path-prefix || '../sample-acc/glossary.xsl')"/>
-            <x:param name="at:acc-toplevel-uri" select="resolve-uri($av:path-prefix || '../sample-acc/tree-report-example.xsl')"/>
-            <x:param name="at:acc-name" select="'glossentry-position'"/>
+            <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || '../sample-acc/glossary.xsl')"/>
+            <x:param name="acc-toplevel-uri" select="resolve-uri($av:path-prefix || '../sample-acc/tree-report-example.xsl')"/>
+            <x:param name="acc-name" select="'glossentry-position'"/>
             <x:context select="doc(resolve-uri($av:path-prefix || '../sample-acc/sample-xml/glossary.xml'))"/>
             <x:expect label="Sanity-check result" test="/h:html/h:body/h:h1">
                 <h:h1>Values of glossentry-position Accumulator for Tree in glossary.xml</h:h1>
@@ -110,14 +110,14 @@
         <x:scenario label="Non-error case">
             <x:call template="at:error-checking">
                 <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
-                <x:param name="acc-name" select="$at:acc-name"/>
+                <x:param name="acc-name" select="$acc-name"/>
             </x:call>
             <x:expect label="Empty sequence and no error" select="()"/>
         </x:scenario>
         <x:scenario label="XSLT file not found" catch="yes">
             <x:call template="at:error-checking">
                 <x:param name="acc-decl-uri" select="'nonexistent'"/>
-                <x:param name="acc-name" select="$at:acc-name"/>
+                <x:param name="acc-name" select="$acc-name"/>
             </x:call>
             <x:expect label="Error"
                 test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
