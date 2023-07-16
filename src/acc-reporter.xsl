@@ -9,9 +9,9 @@
     version="3.0">
 
     <!-- PARAMETERS -->
-    <xsl:param name="at:acc-decl-uri" as="xs:string?"/>
-    <xsl:param name="at:acc-name" as="xs:string?"/>
-    <xsl:param name="at:acc-toplevel-uri" as="xs:string?"/>
+    <xsl:param name="acc-decl-uri" as="xs:string?"/>
+    <xsl:param name="acc-name" as="xs:string?"/>
+    <xsl:param name="acc-toplevel-uri" as="xs:string?"/>
 
     <xsl:param name="at:skip-whitespace" as="xs:boolean" select="true()"/>
     <xsl:param name="at:trunc" as="xs:integer" select="60"/>
@@ -23,32 +23,32 @@
     <xsl:namespace-alias stylesheet-prefix="genxsl" result-prefix="xsl"/>
 
     <xsl:template match="/" as="element()">
-        <xsl:param name="acc-decl-uri" as="xs:string"
-            select="(if ($at:acc-decl-uri != '')
-            then $at:acc-decl-uri
-            else processing-instruction(acc-decl-uri)/normalize-space())
+        <xsl:param name="acc-decl-uri-local" as="xs:string"
+            select="(if ($acc-decl-uri != '')
+            then $acc-decl-uri
+            else processing-instruction('acc-decl-uri')/normalize-space())
             => resolve-uri(base-uri())"/>
-        <xsl:param name="acc-name" as="xs:string"
-            select="if ($at:acc-name != '')
-            then $at:acc-name
-            else processing-instruction(acc-name)/normalize-space()"/>
-        <xsl:param name="acc-toplevel-uri" as="xs:string?"
-            select="(if ($at:acc-toplevel-uri != '')
-            then $at:acc-toplevel-uri
-            else if (processing-instruction(acc-toplevel-uri)/normalize-space())
-            then processing-instruction(acc-toplevel-uri)/normalize-space()
+        <xsl:param name="acc-name-local" as="xs:string"
+            select="if ($acc-name != '')
+            then $acc-name
+            else processing-instruction('acc-name')/normalize-space()"/>
+        <xsl:param name="acc-toplevel-uri-local" as="xs:string?"
+            select="(if ($acc-toplevel-uri != '')
+            then $acc-toplevel-uri
+            else if (processing-instruction('acc-toplevel-uri')/normalize-space())
+            then processing-instruction('acc-toplevel-uri')/normalize-space()
             else ())
             => resolve-uri(base-uri())"/>
 
         <xsl:call-template name="at:error-checking">
-            <xsl:with-param name="acc-decl-uri" select="$acc-decl-uri"/>
-            <xsl:with-param name="acc-name" select="$acc-name"/>
+            <xsl:with-param name="acc-decl-uri" select="$acc-decl-uri-local"/>
+            <xsl:with-param name="acc-name" select="$acc-name-local"/>
         </xsl:call-template>
         <xsl:variable name="transform-options" as="map(xs:string, item()*)">
             <xsl:call-template name="at:transform-options">
-                <xsl:with-param name="acc-decl-uri" select="$acc-decl-uri"/>
-                <xsl:with-param name="acc-name" select="$acc-name"/>
-                <xsl:with-param name="acc-toplevel-uri" select="$acc-toplevel-uri"/>
+                <xsl:with-param name="acc-decl-uri" select="$acc-decl-uri-local"/>
+                <xsl:with-param name="acc-name" select="$acc-name-local"/>
+                <xsl:with-param name="acc-toplevel-uri" select="$acc-toplevel-uri-local"/>
                 <xsl:with-param name="source" select="."/>
             </xsl:call-template>
         </xsl:variable>
