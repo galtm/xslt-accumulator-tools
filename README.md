@@ -27,8 +27,6 @@ The `src/acc-reporter.xsl` stylesheet requires the following information that yo
 | URI of top-level XSLT module, if different from the file containing the accumulator declaration, relative to the XML file's base URI | `$acc-toplevel-uri` | `<?acc-toplevel-uri my-main-xslt-uri?>`  |
 
 
-In the notation above, the `at` prefix is associated with the `http://github.com/galtm/xslt-accumulator-tools` namespace.
-
 If your accumulator's name is in a namespace with URI `foo`, you can use notation `Q{foo}my-accumulator-name` in the value of the `$acc-name` XSLT parameter or the `acc-name` processing instruction.
 
 ### Oxygen XML Editor Instructions
