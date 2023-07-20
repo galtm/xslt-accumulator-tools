@@ -72,13 +72,8 @@
                 following-sibling::xsl:include[@href='acc-report-inclusion.xsl']/
                 following-sibling::xsl:import[@href='user-xslt.xsl'])"/>
             <x:expect label="Stylesheet parameters are as expected"
-                test="$x:result('stylesheet-params') => map:keys()"
-                select="(
-                    QName($av:ns,'at:acc-name'),
-                    QName($av:ns,'at:trunc'),
-                    QName($av:ns,'at:skip-whitespace'),
-                    QName($av:ns,'at:acc-decl-uri')
-                )"/>
+                test="sort( map:keys( $x:result('stylesheet-params') ) ! xs:string(.) )"
+                select="('at:acc-decl-uri','at:acc-name','at:skip-whitespace','at:trunc')"/>
         </x:scenario>
         <x:scenario label="Accumulator declaration is in subordinate XSLT file, so acc-toplevel-uri is provided separately">
             <x:call template="at:transform-options">
@@ -93,13 +88,8 @@
                 xsl:include[@href='acc-report-inclusion.xsl']/
                 following-sibling::xsl:import[@href='user-main-xslt.xsl'])"/>
             <x:expect label="Stylesheet parameters are as expected (and do not include at:acc-toplevel-uri)"
-                test="$x:result('stylesheet-params') => map:keys()"
-                select="(
-                QName($av:ns,'at:acc-name'),
-                QName($av:ns,'at:trunc'),
-                QName($av:ns,'at:skip-whitespace'),
-                QName($av:ns,'at:acc-decl-uri')
-                )"/>
+                test="sort( map:keys( $x:result('stylesheet-params') ) ! xs:string(.) )"
+                select="('at:acc-decl-uri','at:acc-name','at:skip-whitespace','at:trunc')"/>
             <x:expect label="Stylesheet parameter at:acc-decl-uri is the file containing the declaration, not the parent file"
                 test="$x:result('stylesheet-params')(QName($av:ns,'at:acc-decl-uri'))"
                 select="'user-xslt-with-accumulator-declaration.xsl'"/>
