@@ -1,6 +1,6 @@
 # XSLT Accumulator Tools
 
-Utilities for exploring and testing XSLT accumulators, to complement an upcoming Balisage 2023 conference presentation.
+Utilities for exploring and testing XSLT accumulators, to complement the Balisage 2023 conference presentation, [Accumulators in XSLT and XSpec: Developing, Debugging, and Testing XSLT 3 Accumulators](https://balisage.net/Proceedings/vol28/html/Galtman01/BalisageVol28-Galtman01.html).
 
 - [Report of Accumulator Values](#report-of-accumulator-values)
 - [Helper for XSpec Tests for Accumulators](#helper-for-xspec-tests-for-accumulators)
