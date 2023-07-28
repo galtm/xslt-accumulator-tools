@@ -27,6 +27,8 @@
     <!-- ============ -->
     <!-- ACCUMULATORS -->
 
+    <!-- That at:indent-level accumulator tracks the indentation level to use
+        in the HTML report. -->
     <xsl:accumulator name="at:indent-level" as="xs:integer" initial-value="0">
         <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction()"
             select="$value + 1"/>
@@ -35,8 +37,8 @@
             select="$value - 1"/>
     </xsl:accumulator>
 
-    <!-- The at:two-value-queue accumulator stores another accumulator's
-        last value and current value. -->
+    <!-- The at:two-value-queue accumulator, as a stepping stone toward at:prior-value,
+        stores another accumulator's last value and current value. -->
     <xsl:accumulator name="at:two-value-queue" initial-value="()" as="map(*)?">
         <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction() | document-node()"
             phase="start">
@@ -54,6 +56,8 @@
         </xsl:accumulator-rule>
     </xsl:accumulator>
 
+    <!-- The at:prior-value accumulator reads off the prior value that was stored in the
+        at:two-value-queue accumulator. -->
     <xsl:accumulator name="at:prior-value" initial-value="()">
         <xsl:accumulator-rule match="element() | text() | comment() | processing-instruction() | document-node()">
             <xsl:sequence select="(accumulator-before('at:two-value-queue'))('prior')"/>
@@ -67,6 +71,11 @@
     <!-- ======================= -->
     <!-- TEMPLATES AND FUNCTIONS -->
 
+    <!--
+        This template produces HTML markup for the report.
+        This template is the initial template when acc-reporter.xsl
+        calls a generated transform that includes this one.
+    -->
     <xsl:template name="at:process-root" as="element(h:html)" expand-text="1">
         <!-- Context item is document node or other root of tree -->
         <xsl:context-item as="node()" use="required"/>
@@ -99,6 +108,10 @@
         </html>
     </xsl:template>
 
+    <!--
+        This template creates one table row each for the start and end of the
+        document, applying templates in between those two rows.
+    -->
     <xsl:template match="document-node()" mode="at:acc-view" as="element(h:tr)+">
         <tr>
             <td>
@@ -127,6 +140,10 @@
         </tr>
     </xsl:template>
 
+    <!--
+        This template creates one table row each for the start and end of the
+        element, applying templates in between those two rows.
+    -->
     <xsl:template match="element()" mode="at:acc-view" expand-text="1"
         as="element(h:tr)+">
         <tr>
@@ -156,6 +173,11 @@
         </tr>
     </xsl:template>
 
+    <!--
+        This template creates one table row for a text node, unless
+        the node consists of white space only and $at:skip-whitespace
+        is true.
+    -->
     <xsl:template match="text()" mode="at:acc-view" as="element(h:tr)?">
         <xsl:if test="not($at:skip-whitespace) or
             string-length(replace(.,'\s+','')) gt 0">
@@ -170,6 +192,9 @@
         </xsl:if>
     </xsl:template>
 
+    <!--
+        This template creates one table row for a comment node.
+    -->
     <xsl:template match="comment()" mode="at:acc-view" as="element(h:tr)?">
         <tr>
             <td>
@@ -183,6 +208,10 @@
         </tr>
     </xsl:template>
 
+    <!--
+        This template creates one table row for a processing instruction node,
+        unless it is a special PI for consumption by this reporting tool.
+    -->
     <xsl:template match="processing-instruction()" mode="at:acc-view"
         expand-text="1" as="element(h:tr)?">
         <xsl:if test="not(name(.)=('acc-decl-uri','acc-name','acc-toplevel-uri'))">
@@ -191,7 +220,7 @@
                     <span class="pi">
                         <xsl:variable name="stringseq" as="xs:string+">
                             <xsl:call-template name="at:indent"/>
-                            <xsl:sequence select="'&lt;?' || name(.) || ' ' || . || '?>'"/>                            
+                            <xsl:sequence select="'&lt;?' || name(.) || ' ' || . || '?>'"/>
                         </xsl:variable>
                         <xsl:sequence select="string-join($stringseq,'')"/>
                     </span>
@@ -203,6 +232,10 @@
         </xsl:if>
     </xsl:template>
 
+    <!--
+        This template creates a string for indenting table cell content
+        by a depth taken from the at:indent-level accumulator.
+    -->
     <xsl:template name="at:indent" as="xs:string">
         <xsl:context-item use="required" as="node()"/>
         <xsl:variable name="level" as="xs:integer"
@@ -213,10 +246,14 @@
             '')"/>
     </xsl:template>
 
-    <!-- For non-element nodes, first column doesn't render distinct start and
-        end phases. Make the second column distinguish phases only if the
-        accumulator has different values for this node at start and end phases
-        (which is probably uncommon in practice, for a non-element node). -->
+    <!--
+        This template creates content for a cell in the second column, in a
+        row for a non-element node. For these nodes, the first column doesn't
+        render distinct start and end phases. This template makes the second
+        column distinguish the two phases only if the accumulator has different
+        values for this node at start and end phases (which is probably
+        uncommon in practice, for a non-element node).
+    -->
     <xsl:template name="at:second-column-non-element-node">
         <xsl:context-item use="required"/>
         <xsl:variable name="start-phase-info" as="element(h:pre)?">
@@ -245,6 +282,14 @@
         </xsl:choose>
     </xsl:template>
 
+    <!--
+        This template creates HTML markup for the accumulator declaration.
+
+        Parameters:
+
+        $acc-decl-uri: URI of file containing accumulator declaration
+        $acc-name: Accumulator name
+    -->
     <xsl:template name="at:show-declaration" as="element(h:details)">
         <xsl:param name="acc-decl-uri" as="xs:string" select="$at:acc-decl-uri"/>
         <xsl:param name="acc-name" as="xs:string" select="$at:acc-name"/>
@@ -262,6 +307,11 @@
         </details>
     </xsl:template>
 
+    <!--
+        This template creates a string based on content of a text
+        or comment node. The string includes indentation and also
+        replaces text with "..." after $at:trunc characters.
+    -->
     <xsl:template name="at:truncated-text-or-comment" as="xs:string">
         <xsl:context-item use="required" as="node()"/>
         <xsl:variable name="stringseq" as="xs:string+">
@@ -280,6 +330,16 @@
         <xsl:sequence select="string-join($stringseq,'')"/>
     </xsl:template>
 
+    <!--
+        This template creates a <pre> element with the serialized
+        value of the accumulator, but only if the value has changed
+        since its prior value.
+
+        Parameters:
+
+        $acc-value: Current value of accumulator
+        $acc-prior-value: Prior value of accumulator
+    -->
     <xsl:template name="at:acc-value-if-changed" as="element(h:pre)?">
         <xsl:param name="acc-value" select="accumulator-before($at:acc-name)"/>
         <xsl:param name="acc-prior-value" select="accumulator-before('at:prior-value')"/>
@@ -298,6 +358,14 @@
         </xsl:if>
     </xsl:template>
 
+    <!--
+        This function produces HTML markup for displaying a
+        sequence of attributes.
+
+        Parameters:
+
+        $attrs: Sequence of attribute nodes
+    -->
     <xsl:function name="at:list-attrs" as="element(h:span)*">
         <xsl:param name="attrs" as="attribute()*"/>
         <xsl:iterate select="$attrs" expand-text="1">
@@ -306,6 +374,16 @@
         </xsl:iterate>
     </xsl:function>
 
+    <!--
+        This function truncates the beginning of URIs in
+        clones of this repository so that they start from
+        .../xslt-accumulator-tools/. URIs outside this
+        repository are unchanged.
+
+        Parameters:
+
+        $uri: URI as a string
+    -->
     <xsl:function name="at:truncate-uri" as="xs:string">
         <xsl:param name="uri" as="xs:string?"/>
         <xsl:variable name="repo-sample-acc" as="xs:string"

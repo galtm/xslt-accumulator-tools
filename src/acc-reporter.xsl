@@ -8,6 +8,7 @@
     exclude-result-prefixes="#all"
     version="3.0">
 
+    <!-- ========== -->
     <!-- PARAMETERS -->
     <xsl:param name="acc-decl-uri" as="xs:string?"/>
     <xsl:param name="acc-name" as="xs:string?"/>
@@ -16,12 +17,40 @@
     <xsl:param name="at:skip-whitespace" as="xs:boolean" select="true()"/>
     <xsl:param name="at:trunc" as="xs:integer" select="60"/>
 
+    <!-- ======= -->
     <!-- IMPORTS -->
     <xsl:import href="lib/xspec/src/compiler/base/util/compiler-eqname-utils.xsl"/>
 
+    <!-- ======= -->
     <!-- ALIASES -->
     <xsl:namespace-alias stylesheet-prefix="genxsl" result-prefix="xsl"/>
 
+    <!-- ========= -->
+    <!-- TEMPLATES -->
+
+    <!--
+        This template transforms the given XML file with a generated
+        XSLT stylesheet that combines tools from this repository
+        with user-specified XSLT code.
+
+        Parameters:
+
+        $acc-decl-uri-local: URI of file containing accumulator
+            declaration. Default is from global $acc-decl-uri, if
+            nonempty, or the XML tree's top-level processing
+            instruction named acc-decl-uri. If used, the default
+            value is resolved relative to the XML file's base URI.
+        $acc-name-local: Accumulator name. Default is from global
+            $acc-name, if nonempty, or the XML tree's top-level
+            processing instruction named acc-name.
+        $acc-toplevel-uri-local: URI of top-level XSLT file, if
+            different from the file containing the accumulator
+            declaration. Default is from global $acc-toplevel-uri,
+            if nonempty, or the XML tree's top-level processing
+            instruction named acc-toplevel-uri. If used, the
+            default value is resolved relative to the XML file's
+            base URI.
+    -->
     <xsl:template match="/" as="element()">
         <xsl:param name="acc-decl-uri-local" as="xs:string"
             select="(if ($acc-decl-uri != '')
@@ -56,6 +85,17 @@
         <xsl:sequence select="$transform-result?output"/>
     </xsl:template>
 
+    <!--
+        This template creates a map of transform options suitable for
+        use with transform().
+
+        Parameters:
+
+        $acc-decl-uri: Like top-level template's $acc-decl-uri-local
+        $acc-name: Like top-level template's $acc-name-local
+        $acc-toplevel-uri: Like top-level template's $acc-toplevel-uri-local
+        $source: XML document node
+    -->
     <xsl:template name="at:transform-options" as="map(xs:string, item()*)">
         <xsl:param name="acc-decl-uri" as="xs:string"/>
         <xsl:param name="acc-name" as="xs:string"/>
@@ -95,6 +135,15 @@
         <xsl:sequence select="$transform-options"/>
     </xsl:template>
 
+    <!--
+        This template checks that the user-specified XSLT module
+        has exactly one accumulator by the expected name.
+
+        Parameters:
+
+        $acc-decl-uri: Like top-level template's $acc-decl-uri-local
+        $acc-name: Like top-level template's $acc-name-local
+    -->
     <xsl:template name="at:error-checking" as="empty-sequence()">
         <xsl:param name="acc-decl-uri" as="xs:string" required="yes"/>
         <xsl:param name="acc-name" as="xs:string" required="yes"/>
