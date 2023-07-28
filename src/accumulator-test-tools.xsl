@@ -10,6 +10,14 @@
         so they can be accessed from an XSpec external transformation
         using x:call. -->
 
+    <!--
+        This function is a wrapper around fn:accumulator-before.
+
+        Parameters:
+
+        $context: Context node from which to call fn:accumulator-before
+        $name: Accumulator name
+    -->
     <xsl:function name="at:accumulator-before" visibility="public">
         <xsl:param name="context" as="node()?"/>
         <xsl:param name="name" as="xs:string"/>
@@ -23,6 +31,14 @@
         <xsl:sequence select="$context/fn:accumulator-before($name)"/>
     </xsl:function>
 
+    <!--
+        This function is a wrapper around fn:accumulator-after.
+
+        Parameters:
+
+        $context: Context node from which to call fn:accumulator-after
+        $name: Accumulator name
+    -->
     <xsl:function name="at:accumulator-after" visibility="public">
         <xsl:param name="context" as="node()?"/>
         <xsl:param name="name" as="xs:string"/>
