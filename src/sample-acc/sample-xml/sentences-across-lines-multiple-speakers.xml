@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?acc-decl-uri ../sentences-across-lines-multiple-speakers.xsl?>
+<?acc-name sentences?>
+<lines>
+    <!--
+        This file has lines that contain sentences by multiple
+        "speakers" identified by id attributes, where sentences
+        split across lines. An accumulator can assemble the
+        full sentence of each individual speaker.
+    -->
+    <line>
+        <sentence id="a">I FEEL LIKE</sentence>
+        <sentence id="b">can you</sentence>
+    </line>
+    <line>
+        <sentence continues="b">just</sentence>
+        <sentence continues="a">SHOUTING</sentence>
+    </line>
+    <line>
+        <sentence id="c" voice="whisper">Shh, This</sentence>
+        <sentence continues="b">celebrate</sentence>
+    </line>
+    <line>
+        <sentence continues="b">more</sentence>
+        <sentence continues="c" face="frown">Is a</sentence>
+    </line>
+    <line>
+        <sentence continues="a">WITH JOY!</sentence>
+        <sentence continues="b">quietly?</sentence>
+        <sentence continues="c">Library.</sentence>
+    </line>
+</lines>
