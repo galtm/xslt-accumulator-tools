@@ -13,7 +13,7 @@ Use the `src/acc-reporter.xsl` stylesheet to generate an HTML report of accumula
 Here are samples that show how the report looks:
 
 * [Word count](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/src/sample-acc/sample-xml/acc-report/word-count-sample-acc-report.html)
-* [Sentences split across lines and interspersed among multiple speakers](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/src/sample-acc/sample-xml/acc-report/sentences-across-lines-multiple-speakers.html)
+* [Sentences split across lines and interspersed among multiple speakers](https://htmlpreview.github.io/?https://github.com/galtm/xslt-accumulator-tools/blob/main/src/sample-acc/sample-xml/acc-report/sentences-across-lines-multiple-speakers-acc-report.html)
 
 ### Required Inputs
 The `src/acc-reporter.xsl` stylesheet requires the following information that you provide:
