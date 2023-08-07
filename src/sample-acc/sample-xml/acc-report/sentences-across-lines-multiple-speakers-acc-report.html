@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Values of sentences Accumulator for Tree in sentences-across-lines-multiple-speakers.xml</title>
+      <style type="text/css">
+.pi       {color: #8B26C9;}
+.comment  {color: #006400;}
+.tag      {color: #0072AA;}
+.attrname {color: #F5844C;}
+.attrval  {color: #993300;}
+h1 { font-size:160%; color: #393E46;}
+p, summary { color: #0072AA; margin-top: 2px; margin-bottom: 5px; font-weight: bold;}
+code, pre { color: #222831; margin-top: 2px; font-weight: normal;}
+table, th, td {border: 1px #222831 dotted;}
+table { border-collapse: collapse; width: 100%; margin-top: 2em;}
+th, td { padding: 0px 8px 0px 8px; }
+th { background-color: #0072AA; color: #EEEEEE; padding: 5px 5px;}</style>
+   </head>
+   <body>
+      <h1>Values of sentences Accumulator for Tree in sentences-across-lines-multiple-speakers.xml</h1>
+      <p>Document URI: <code>.../xslt-accumulator-tools/src/sample-acc/sample-xml/sentences-across-lines-multiple-speakers.xml</code></p>
+      <p>Accumulator declaration URI: <code>.../xslt-accumulator-tools/src/sample-acc/sentences-across-lines-multiple-speakers.xsl</code></p>
+      <details>
+         <summary>Declaration</summary>
+         <pre>
+&lt;xsl:accumulator xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                 name="sentences"
+                 initial-value="()"
+                 as="element(sentence)*"&gt;
+   &lt;xsl:accumulator-rule match="sentence"&gt;
+      &lt;xsl:choose&gt;
+         &lt;xsl:when test="not(@continues != '')"&gt;
+                    &lt;!-- No continuation. Add sentence to sequence. --&gt;
+            &lt;xsl:sequence select="($value, .)"/&gt;
+         &lt;/xsl:when&gt;
+         &lt;xsl:otherwise&gt;
+                    &lt;!-- Append to the correct existing sentence. Preserve unrelated sentences. --&gt;
+            &lt;xsl:variable name="this-sentence" select="." as="element(sentence)"/&gt;
+            &lt;xsl:variable name="continues" select="@continues" as="xs:string"/&gt;
+            &lt;xsl:iterate select="$value"&gt;
+               &lt;xsl:choose&gt;
+                  &lt;xsl:when test="string(@id) = $continues"&gt;
+                     &lt;sentence&gt;
+                                    &lt;!-- Keep old attributes and add new ones, except @continues --&gt;
+                        &lt;xsl:sequence select="attribute() |                                         $this-sentence/@*[not(name()='continues')]"/&gt;
+                        &lt;!-- Keep earlier content and append new content --&gt;
+                        &lt;xsl:sequence select="node()"/&gt;
+                        &lt;xsl:text&gt; &lt;/xsl:text&gt;
+                        &lt;xsl:sequence select="$this-sentence/node()"/&gt;
+                     &lt;/sentence&gt;
+                  &lt;/xsl:when&gt;
+                  &lt;xsl:otherwise&gt;
+                                &lt;!-- Pass sentence through unchanged --&gt;
+                     &lt;xsl:sequence select="."/&gt;
+                  &lt;/xsl:otherwise&gt;
+               &lt;/xsl:choose&gt;
+            &lt;/xsl:iterate&gt;
+         &lt;/xsl:otherwise&gt;
+      &lt;/xsl:choose&gt;
+   &lt;/xsl:accumulator-rule&gt;
+&lt;/xsl:accumulator&gt;
+</pre>
+      </details>
+      <table>
+         <thead>
+            <th>Node or Element Tag</th>
+            <th>Value, Changed or Document Start/End</th>
+         </thead>
+         <tbody>
+            <tr>
+               <td><em>Document node start</em></td>
+               <td>
+                  <pre>()</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>  <span class="tag">&lt;lines</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td><span class="comment">    &lt;!--
+                     This file has lines that contain sentences by multi...--&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;line</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> id=</span><span class="attrval">"a"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        I FEEL LIKE</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> id=</span><span class="attrval">"b"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        can you</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;/line&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;line</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"b"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        just</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"a"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        SHOUTING</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;/line&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;line</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> id=</span><span class="attrval">"c"</span><span class="attrname"> voice=</span><span class="attrval">"whisper"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper"&gt;Shh, This&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        Shh, This</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"b"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just celebrate&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper"&gt;Shh, This&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        celebrate</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;/line&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;line</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"b"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just celebrate more&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper"&gt;Shh, This&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        more</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"c"</span><span class="attrname"> face=</span><span class="attrval">"frown"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just celebrate more&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper" face="frown"&gt;Shh, This Is a&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        Is a</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;/line&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;line</span><span class="tag">&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"a"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING WITH JOY!&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just celebrate more&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper" face="frown"&gt;Shh, This Is a&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        WITH JOY!</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"b"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING WITH JOY!&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just celebrate more quietly?&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper" face="frown"&gt;Shh, This Is a&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        quietly?</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;sentence</span><span class="attrname"> continues=</span><span class="attrval">"c"</span><span class="tag">&gt;</span></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING WITH JOY!&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just celebrate more quietly?&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper" face="frown"&gt;Shh, This Is a Library.&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+            <tr>
+               <td>        Library.</td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>      <span class="tag">&lt;/sentence&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>    <span class="tag">&lt;/line&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>  <span class="tag">&lt;/lines&gt;</span></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td><em>Document node end</em></td>
+               <td>
+                  <pre>
+&lt;sentence id="a"&gt;I FEEL LIKE SHOUTING WITH JOY!&lt;/sentence&gt;
+
+
+&lt;sentence id="b"&gt;can you just celebrate more quietly?&lt;/sentence&gt;
+
+
+&lt;sentence id="c" voice="whisper" face="frown"&gt;Shh, This Is a Library.&lt;/sentence&gt;
+</pre>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+   </body>
+</html>
