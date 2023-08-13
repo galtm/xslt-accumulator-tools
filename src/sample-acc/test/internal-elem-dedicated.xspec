@@ -18,15 +18,20 @@
             label="At end of subsection remark, 1 element name in stack"
             test="$myv:tree/section/section/remark/accumulator-after('internal-elem')"
             select="('section')"/>
+        <!--
+            Use of exactly-one() ensures that if $myv:tree yields an empty sequence
+            by mistake, you'll get an error instead of having the accumulator function
+            return empty for the wrong reason.
+        -->
         <x:expect
             label="At end of document, stack is empty"
-            test="$myv:tree/accumulator-after('internal-elem')"
+            test="exactly-one($myv:tree)/accumulator-after('internal-elem')"
             select="()"/>
 
         <!-- Variation: Boolean @test and no @select -->
         <x:expect
             label="At end of document, stack is empty"
-            test="empty($myv:tree/accumulator-after('internal-elem'))"/>
+            test="empty(exactly-one($myv:tree)/accumulator-after('internal-elem'))"/>
     </x:scenario>
 
     <!-- 

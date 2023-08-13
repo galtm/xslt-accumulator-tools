@@ -61,8 +61,13 @@
             </x:variable>
             <x:call function="true"/>
             <x:like label="at:prior-value accumulator values for nodes other than document node"/>
+            <!--
+                Use of exactly-one() ensures that if $av:tree/self::document-node() yields an empty sequence
+                by mistake, you'll get an error instead of having the accumulator function
+                return empty for the wrong reason.
+            -->
             <x:expect label="At start of document node, result is () because there is no prior value"
-                test="$av:tree/self::document-node()/accumulator-before('at:prior-value')"
+                test="exactly-one($av:tree/self::document-node())/accumulator-before('at:prior-value')"
                 select="()"/>
             <x:expect label="At end of document node, prior indent level is 0"
                 test="$av:tree/self::document-node()/accumulator-after('at:prior-value')"
