@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec" schematron="do-nothing.sch">
+    <x:scenario label="demo-01">
+        <x:context><foo/></x:context>
+        <x:expect label="trivial pass" test="true()"/>
+    </x:scenario>
+</x:description>
