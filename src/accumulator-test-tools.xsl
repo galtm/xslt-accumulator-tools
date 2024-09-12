@@ -22,8 +22,8 @@
         <xsl:param name="context" as="node()?"/>
         <xsl:param name="name" as="xs:string"/>
         <!-- If data type of $context is "node()" then XSpec with run-as="import"
-            cannot catch an empty context. So, allow "node?" and check for the
-            empty case here. -->
+            cannot catch an empty context. So, use the less restrictive
+            as="node()?" and check for the empty case here. -->
         <xsl:if test="empty($context)">
             <xsl:sequence select="error(xs:QName('at:XPTY0004'),
                 'An empty sequence is not allowed as the context of accumulator-before()')"/>
