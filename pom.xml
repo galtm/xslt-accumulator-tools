@@ -90,7 +90,7 @@
                     <dependency>
                         <groupId>io.xspec</groupId>
                         <artifactId>xspec</artifactId>
-                        <version>3.0.3</version>
+                        <version>3.1.2</version>
                         <classifier>enduser-files</classifier>
                         <type>zip</type>
                     </dependency>
