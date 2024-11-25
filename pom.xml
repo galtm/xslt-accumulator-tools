@@ -13,7 +13,7 @@
         <tag>HEAD</tag>
     </scm>
     <properties>
-        <saxon.version>12.4</saxon.version>
+        <saxon.version>12.5</saxon.version>
     </properties>
     <build>
         <plugins>
