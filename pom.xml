@@ -7,11 +7,15 @@
     <version>0.1.0-SNAPSHOT</version>
     <name>XSLT Accumulator Tools</name>
     <description>Tools for debugging and testing XSLT accumulators</description>
+    <url>https://github.com/galtm/xslt-accumulator-tools</url>
     <scm>
         <url>https://github.com/galtm/xslt-accumulator-tools</url>
         <developerConnection>scm:git:https://github.com/galtm/xslt-accumulator-tools</developerConnection>
         <tag>HEAD</tag>
     </scm>
+    <issueManagement>
+        <url>https://github.com/galtm/xslt-accumulator-tools/issues</url>
+    </issueManagement>
     <properties>
         <saxon.version>12.5</saxon.version>
     </properties>
