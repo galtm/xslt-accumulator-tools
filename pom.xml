@@ -17,7 +17,7 @@
         <url>https://github.com/galtm/xslt-accumulator-tools/issues</url>
     </issueManagement>
     <properties>
-        <saxon.version>12.5</saxon.version>
+        <saxon.version>12.6</saxon.version>
     </properties>
     <build>
         <plugins>
