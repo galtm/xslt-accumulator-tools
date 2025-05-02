@@ -112,8 +112,10 @@
                 </x:call>
                 <x:expect label="Error"
                     test="$x:result instance of map(*) and $x:result('err') instance of map(*)"/>
+                <!-- Saxon 12.5: Starts with "A sequence of more than one item is not allowed" -->
+                <!-- Saxon 12.6: Starts with "A sequence of more than one item { (&lt;?acc-decl-uri...?&gt;, &lt;?acc-name...?&gt;) } is not allowed" -->
                 <x:expect label="Message about sequence with multiple items"
-                    test="$x:result('err')('description') => starts-with('A sequence of more than one item is not allowed')"/>
+                    test="$x:result('err')('description') => matches('A sequence of more than one item (.*)is not allowed')"/>
             </x:scenario>
             <x:scenario label="Empty string as name of accumulator">
                 <x:call>
