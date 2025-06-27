@@ -1,5 +1,7 @@
 # XSLT Accumulator Tools
 
+[![Run XSpec tests with Maven](https://github.com/galtm/xslt-accumulator-tools/actions/workflows/maven.yml/badge.svg)](https://github.com/galtm/xslt-accumulator-tools/actions/workflows/maven.yml)
+
 Utilities for exploring and testing XSLT accumulators, to complement the Balisage 2023 conference presentation, [Accumulators in XSLT and XSpec: Developing, Debugging, and Testing XSLT 3 Accumulators](https://balisage.net/Proceedings/vol28/html/Galtman01/BalisageVol28-Galtman01.html).
 
 - [Report of Accumulator Values](#report-of-accumulator-values)
