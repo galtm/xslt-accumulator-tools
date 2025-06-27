@@ -5,7 +5,7 @@ Utilities for exploring and testing XSLT accumulators, to complement the Balisag
 - [Report of Accumulator Values](#report-of-accumulator-values)
 - [Helper for XSpec Tests for Accumulators](#helper-for-xspec-tests-for-accumulators)
 
-License: AGPL 3.0 or later
+License: MIT
 
 ## Report of Accumulator Values
 Use the `src/acc-reporter.xsl` stylesheet to generate an HTML report of accumulator values associated with nodes of an XML file.
