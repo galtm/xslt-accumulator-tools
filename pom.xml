@@ -94,7 +94,7 @@
                     <dependency>
                         <groupId>io.xspec</groupId>
                         <artifactId>xspec</artifactId>
-                        <version>3.4.3</version>
+                        <version>4.0.2</version>
                         <classifier>enduser-files</classifier>
                         <type>zip</type>
                     </dependency>
