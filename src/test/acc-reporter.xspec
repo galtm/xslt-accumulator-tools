@@ -38,11 +38,12 @@
                 <h:h1>Values of glossentry-position Accumulator for Tree in glossary.xml</h:h1>
             </x:expect>
             <x:expect label="Report reflects XML source document, not the XSLT sorting behavior"
-                test="//h:pre[contains(.,'triangle')]">
-                <h:pre>map{"position":1,"term":"triangle"}</h:pre>
-                <h:pre>map{"position":2,"term":"isosceles triangle"}</h:pre>
-                <h:pre>map{"position":3,"term":"equilateral triangle"}</h:pre>
-                <h:pre>map{"position":3,"term":"equilateral triangle"}</h:pre>
+                test="//h:pre[contains(.,'triangle')]/string() ! replace(., '^map', '') ! parse-json(.)"
+                select="//data/string() ! parse-json(.)">
+                <data>{"position":1,"term":"triangle"}</data>
+                <data>{"position":2,"term":"isosceles triangle"}</data>
+                <data>{"position":3,"term":"equilateral triangle"}</data>
+                <data>{"position":3,"term":"equilateral triangle"}</data>
             </x:expect>
         </x:scenario>
     </x:scenario>
