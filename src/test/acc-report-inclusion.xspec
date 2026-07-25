@@ -10,7 +10,6 @@
     xslt-version="3.0">
 
     <x:helper stylesheet="acc-indent-level-modified.xsl"/>
-    <x:import href="maven-helper.xspec"><!-- Defines $av:path-prefix --></x:import>
 
     <x:param name="at:acc-decl-uri" as="xs:string" select="'test/acc-indent-level-modified.xsl'"/>
     <x:param name="at:acc-name" as="xs:string" select="'indent-level-modified'"/>
@@ -351,7 +350,7 @@
         </x:scenario>
         <x:scenario label="acc-name with URI-qualified name">
             <x:call template="at:show-declaration">
-                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-duplicate.xsl')"/>
+                <x:param name="acc-decl-uri" select="'acc-duplicate.xsl' => resolve-uri($x:xspec-uri)"/>
                 <x:param name="acc-name" select="'Q{http://github.com/galtm/xslt-accumulator-tools}acc2'"/>
             </x:call>
             <x:expect label="Sanity-check accumulator declaration code to confirm it was found"

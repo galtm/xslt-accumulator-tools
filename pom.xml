@@ -107,9 +107,6 @@
                         <include>src/sample-acc/test/*.xspec</include>
                         <include>src/test/*.xspec</include>
                     </includes>
-                    <excludes>
-                        <exclude>src/test/maven-helper.xspec</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
