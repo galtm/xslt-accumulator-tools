@@ -10,9 +10,7 @@
     stylesheet="../acc-reporter.xsl"
     xslt-version="3.0">
 
-    <x:import href="maven-helper.xspec"><!-- Defines $av:path-prefix --></x:import>
-
-    <x:param name="acc-decl-uri" as="xs:string" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
+    <x:param name="acc-decl-uri" as="xs:string" select="'acc-indent-level-modified.xsl' => resolve-uri($x:xspec-uri)"/>
     <x:param name="acc-name" as="xs:string" select="'indent-level-modified'"/>
 
     <x:variable name="av:tree" href="node-types.xml" as="document-node()"/>
@@ -32,10 +30,10 @@
         </x:scenario>
         <x:scenario label="$at:generate-tree-report=true in XSLT does not cause an error (because generated XSLT overrides that parameter)">
             <!-- Scenario-level override of global XSLT parameters requires run-as="external" -->
-            <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || '../sample-acc/glossary.xsl')"/>
-            <x:param name="acc-toplevel-uri" select="resolve-uri($av:path-prefix || '../sample-acc/tree-report-example.xsl')"/>
+            <x:param name="acc-decl-uri" select="'../sample-acc/glossary.xsl' => resolve-uri($x:xspec-uri)"/>
+            <x:param name="acc-toplevel-uri" select="'../sample-acc/tree-report-example.xsl' => resolve-uri($x:xspec-uri)"/>
             <x:param name="acc-name" select="'glossentry-position'"/>
-            <x:context select="doc(resolve-uri($av:path-prefix || '../sample-acc/sample-xml/glossary.xml'))"/>
+            <x:context select="'../sample-acc/sample-xml/glossary.xml' => resolve-uri($x:xspec-uri) => doc()"/>
             <x:expect label="Sanity-check result" test="/h:html/h:body/h:h1">
                 <h:h1>Values of glossentry-position Accumulator for Tree in glossary.xml</h:h1>
             </x:expect>
@@ -99,7 +97,7 @@
     <x:scenario label="Tests for at:error-checking template">
         <x:scenario label="Non-error case">
             <x:call template="at:error-checking">
-                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
+                <x:param name="acc-decl-uri" select="'acc-indent-level-modified.xsl' => resolve-uri($x:xspec-uri)"/>
                 <x:param name="acc-name" select="$acc-name"/>
             </x:call>
             <x:expect label="Empty sequence and no error" select="()"/>
@@ -117,7 +115,7 @@
         </x:scenario>
         <x:scenario label="Accumulator not found" catch="yes">
             <x:call template="at:error-checking">
-                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-indent-level-modified.xsl')"/>
+                <x:param name="acc-decl-uri" select="'acc-indent-level-modified.xsl' => resolve-uri($x:xspec-uri)"/>
                 <x:param name="acc-name" select="'nonexistent'"/>
             </x:call>
             <x:expect label="Error"
@@ -128,7 +126,7 @@
         </x:scenario>
         <x:scenario label="Duplicate accumulator found" catch="yes">
             <x:call template="at:error-checking">
-                <x:param name="acc-decl-uri" select="resolve-uri($av:path-prefix || 'acc-duplicate.xsl')"/>
+                <x:param name="acc-decl-uri" select="'acc-duplicate.xsl' => resolve-uri($x:xspec-uri)"/>
                 <x:param name="acc-name" select="'Q{http://github.com/galtm/xslt-accumulator-tools}acc'"/>
             </x:call>
             <x:expect label="Error"
