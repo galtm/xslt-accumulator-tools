@@ -2,7 +2,6 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:db="http://docbook.org/ns/docbook"
-    xmlns:at="http://github.com/galtm/xslt-accumulator-tools"
     exclude-result-prefixes="#all"
     version="3.0">
 
